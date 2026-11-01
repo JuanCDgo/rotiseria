@@ -4,63 +4,62 @@
 
 ---
 
-## 📲 1. ¿Cómo funciona el circuito con tus clientes?
+## 🖼️ 1. ¿Cómo poner el Logo de tu Rotisería?
 
-1. **Cuando un cliente te escribe por WhatsApp pidiendo el menú:**
-   - Le enviás tu enlace de la app (ej: `https://juancdgo.github.io/rotiseria/`).
-2. **El cliente navega el menú interactivo:**
-   - Si quiere empanadas, entra al **Armador de Empanadas**, elige si quiere Docena o Media Docena, y va tocando `+` en sus gustos favoritos.
-   - El sistema le va contando en vivo (ej: *7 de 12*) y al llegar a 12 se frena solo y le pone un botón gigante para sumar al pedido.
-   - Si quiere sándwiches, minutas, platos caseros, bebidas o postres, los va sumando con un toque.
-3. **Elige entrega y pago:**
-   - Puede marcar **Retiro en el local** o **Envío a domicilio** (ingresando su dirección y entrecalles).
-   - Elige **Efectivo** (e ingresa con cuánto paga para que tengas el vuelto listo) o **Transferencia / QR** (donde verá tu Alias de Mercado Pago).
-4. **Envía el pedido:**
-   - Toca **"Enviar pedido por WhatsApp"** y te llega un mensaje prolijo y detallado listo para marchar a la cocina.
+1. En la parte superior derecha de la app, tocás el ícono de **⚙️ Ajustes**.
+2. Arriba de todo vas a ver la sección **"Logo o Foto del Local"**.
+3. Tocás el botón naranja **"Subir Logo (desde celu o PC)"**.
+4. Elegís la foto de tu logo desde tu galería de fotos o archivos de la compu.
+5. ¡Listo! La app comprime la foto automáticamente para que cargue rapidísimo y la coloca en:
+   - La **cabecera de tu menú**.
+   - El **afiche con código QR** para imprimir y pegar en la vidriera o mostrador.
+   - La **tarjeta de fidelidad** con sellos que ven tus clientes.
 
 ---
 
-## 🥟 2. El Armador de Empanadas con Freno Inteligente
+## 📱 2. Modo Lista Rápida: Para que entren todos tus platos sin scroll eterno
 
-- **Media Docena (6):** Permite elegir exactamente 6 empanadas combinando los gustos que el cliente quiera.
-- **Docena (12):** Permite elegir 12 empanadas.
-- **Tope automático:** Al llegar a la cantidad límite, el botón `+` se desactiva y resalta el botón gigante **"¡Docena completa! Agregar al pedido"**.
-- Si el cliente quiere llevar por unidad, también puede seleccionar empanadas sueltas desde el catálogo regular.
+Cuando un local tiene muchos platos (como las 13 pizzas, sándwiches en tira de pan, minutas, pastas y tartas), las fotos grandes hacen que el cliente tenga que deslizar metros y metros de pantalla.
 
----
-
-## 🛠️ 3. Panel de Administración del Negocio
-
-En la barra superior de la app, tocás el ícono de **⚙️ Gestión** (o podés protegerlo con una clave si querés):
-
-### A. Pausar platos o marcar "Agotado por hoy"
-- Si se terminó el lomo o las empanadas de carne a cuchillo, tocás el botón **Pausar** o **Agotado**.
-- **Importante:** La app automáticamente mueve ese plato al **final del menú**, para que tus clientes vean primero todo lo que sí tenés disponible para despachar rápido.
-
-### B. Cambiar precios o agregar platos nuevos
-- Podés modificar el precio de cualquier plato en un segundo y guardar los cambios.
-- Podés crear nuevos platos indicando Nombre, Categoría, Precio y Descripción.
-- Podés agregar nuevas variedades de empanadas al armador interactivo.
-
-### C. Configurar datos de tu negocio
-- Nombre de la rotisería.
-- Teléfono de WhatsApp donde recibís los pedidos.
-- Costo de envío a domicilio (Delivery).
-- Alias o CVU de Mercado Pago / Banco para transferencias.
+Para solucionarlo, la app incluye:
+- **Modo Lista Rápida (Activado por defecto):** muestra cada comida en una fila prolija y compacta con su nombre, precio y botones directos `+` y `-`. ¡Entran entre 10 y 12 comidas en una sola pantalla de celular!
+- **Botón de cambio de vista:** al lado del buscador, podés alternar entre `📋 Lista` y `🎴 Tarjetas`.
+- **Acordeón de Categorías:** podés tocar en cualquier categoría (ej: `🍕 Pizzas (13)`) para plegarla (`▲ Plegar`) o desplegarla (`▼ Ver platos`).
+- **Botones de Categoría arriba:** tocás `🍕 Pizzas` y te muestra únicamente las pizzas; tocás `🥪 Sandwiches` y te muestra solo los sándwiches.
+- **Buscador en vivo:** escribís *"lomo"*, *"muzza"* o *"roquefort"* y te filtra en 1 segundo.
 
 ---
 
-## ⭐ 4. Tarjeta de Fidelidad Digital (Sellos)
+## 🥟 3. El Armador de Empanadas con Freno Inteligente
 
-Fidelizá a tus clientes para que te compren a vos y no a la competencia:
-1. Vos decidís la meta: por ejemplo **cada 6 u 8 pedidos**.
-2. Vos decidís el premio: por ejemplo **"1 Docena de Empanadas de Regalo"** o **"1 Milanesa Completa Gratis"**.
-3. Cada vez que un cliente te compra, le acreditás un sello desde el panel o compartís el link de sumar sello.
-4. Cuando el cliente llega a la meta, la pantalla le festeja con lluvia de confeti y le genera el cupón de canje para su próximo pedido.
+- **Media Docena (6) - $8.500:** elegís 6 empanadas combinando los gustos que quieras.
+- **Docena (12) - $16.000:** elegís 12 empanadas de entre las **11 variedades de la casa** (Árabes, Saladas, Carne a cuchillo, Dulces, Pollo, Jamón y queso, Tres quesos, Choclo, Capresse, Acelga, Queso y cebolla).
+- **Freno automático:** al llegar a 6 o 12, el botón `+` se bloquea y resalta el botón gigante para enviar al pedido.
 
 ---
 
-## 💾 5. Copia de Seguridad
-Desde la solapa de Gestión podés:
-- **Descargar Copia de Seguridad (JSON)** de tus productos y configuración.
-- **Descargar Planilla Excel / CSV** con todos tus platos, categorías y precios actualizados.
+## 🛠️ 4. Panel de Administración del Dueño
+
+Tocando el botón **"Modo Dueño: OFF"** en la barra superior pasás a modo administrador:
+- **Pausar platos / Agotado por hoy:** tocás el botón de pausa y esa comida se mueve **automáticamente al final del menú**, para que tus clientes vean primero lo que sí tenés disponible.
+- **Cambiar precios o editar platos:** tocás el botón `✏️` al lado de cualquier plato para cambiar su precio, nombre o descripción en 5 segundos.
+- **Agregar comidas nuevas:** tocás `+ Nuevo Plato` y sumás lo que quieras.
+
+---
+
+## 🛵 5. Circuito de Pedidos y Cobro
+
+- El cliente arma su pedido tocando `+` o armando sus empanadas.
+- En el carrito elige:
+  - **Retiro en el local** o **Envío a domicilio** (ingresando su dirección y entrecalles).
+  - **Efectivo** (e ingresa con cuánto paga para que lleves el vuelto exacto preparado) o **Transferencia / QR** (donde verá tu Alias de Mercado Pago).
+- Toca **"Enviar pedido por WhatsApp"** y te llega un mensaje prolijo y ordenado directo a tu chat.
+
+---
+
+## ⭐ 6. Tarjeta de Fidelidad Digital (Sellos)
+
+1. Vos definís la meta: por ejemplo **cada 6 pedidos**.
+2. Vos definís el premio: por ejemplo **"1/2 docena de empanadas o papas gratis"**.
+3. Cada vez que un cliente te compra, le acreditás un sello desde el panel.
+4. Al completar los sellos, la app festeja con confeti y genera el cupón de canje.

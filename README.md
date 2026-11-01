@@ -1,56 +1,70 @@
 # 🍗 Rotisería & Minutas - Micro App Web
 
-Micro-aplicación web moderna, ultra liviana e interactiva diseñada para rotiserías, casas de empanadas, sandwicherías y locales de comida para llevar y delivery en Argentina.
+Micro-aplicación web ultra ágil, moderna y personalizable diseñada para rotiserías, casas de empanadas, pizzerías, sandwicherías y locales gastronómicos de comida para llevar y delivery en Argentina.
 
 ---
 
-## 🌟 Características Principales
+## 🌟 Novedades y Características Principales
 
-### 1. 🥟 Armador Inteligente de Empanadas (con Smart Cap)
-- Selector de **Docena (12)** o **Media Docena (6)**.
+### 1. 🖼️ Personalización con Logo Propio del Local
+- El dueño puede **subir el logo de su rotisería** desde el celular o la computadora (desde Ajustes).
+- La imagen se auto-optimiza y comprime para no ralentizar la carga ni ocupar memoria de más.
+- El logo se muestra automáticamente en:
+  - La **cabecera principal del menú** digital.
+  - El **afiche imprimible con código QR** para pegar en el mostrador o la vidriera.
+  - La **tarjeta de fidelidad digital** con sellos.
+- Permite también quitar el logo y volver al ícono gastronómico por defecto.
+
+### 2. 📋 Modo Lista Rápida (Alta Densidad de Platos)
+- **Diseño ultra compacto**: pensado para locales con 30, 40 o más platos (pizzas, minutas, sándwiches, tartas, pastas, tortillas).
+- Entran entre **10 y 12 platos en una sola pantalla de celular** sin requerir scroll excesivo.
+- Selector de vista integrado:
+  - **📋 Modo Lista Rápida**: vista limpia estilo comanda / lista de precios de WhatsApp con botones `[-] QTY [+]` directos en la fila.
+  - **🎴 Modo Tarjetas**: vista extendida con descripciones completas.
+- **Acordeón Inteligente de Categorías**: cada categoría en la vista general se puede plegar o desplegar con un toque (`▲ Plegar / ▼ Ver platos`), además de chips superiores con conteo de platos para saltar directo a `🍕 Pizzas (13)`, `🥪 Sandwiches (8)`, etc.
+- **Buscador en vivo instantáneo**: encontrá cualquier plato, variedad de pizza o empanada en menos de un segundo con botón para limpiar búsqueda.
+
+### 3. 🥟 Armador Inteligente de Empanadas (con Smart Cap)
+- Botones de acceso directo para **Docena ($16.000)** o **Media Docena ($8.500)**.
+- **11 Variedades Reales**: Árabes, Saladas, Carne cortada a cuchillo, Dulces, Pollo, Jamón y queso, Tres quesos, Choclo, Capresse, Acelga, Queso y cebolla.
 - Contador interactivo en tiempo real con barra de progreso (*"Elegiste X de 12"*).
-- Botones `+` y `-` por variedad (Carne Suave, Carne Cuchillo, Jamón y Queso, Pollo, Roquefort, Caprese, Verdura, etc.).
-- **Freno automático**: Al alcanzar el tope (6 o 12), los botones de suma se bloquean para evitar confusiones.
-- **Botón Gigante**: Se destaca con animación pulsante al completar la docena o media docena para añadir al carrito de un solo toque.
+- **Freno automático**: Al alcanzar el tope (6 o 12), los botones de suma se bloquean.
+- **Botón Gigante**: Se destaca con animación pulsante para enviar al pedido.
 
-### 2. 📋 Menú Digital Categorizado y Editable
-- Categorías organizadas:
-  - 🥪 **Sándwiches & Minutas** (Lomo completo, Milanesa gigante, Hamburguesas caseras, etc.)
-  - 🥟 **Empanadas & Tartas**
-  - 🍲 **Platos del Día / Cocina Casera** (Pastas caseras, Pollo al spiedo con papas, Pastel de papas, etc.)
-  - 🍟 **Guarniciones & Ensaladas** (Papas fritas, Ensalada rusa, etc.)
-  - 🥤 **Bebidas** (Gaseosas, Aguas saborizadas, Cervezas)
-  - 🍨 **Postres** (Flan casero, Budín de pan, Helados)
-- **Ordenamiento Inteligente**: Las comidas que el negocio pausa o desactiva se mueven **automáticamente al final** de la lista.
+### 4. 🍽️ Catálogo Real Precargado (44 Platos)
+- **🍕 13 Variedades de Pizzas**: Muzzarela, Jamón, Huevo, Morrón, Jamón y morrones, Fugazzeta, Choclo, Roquefort, Napolitana, 4 quesos, Primavera, Especial, Estrellada.
+- **🥪 Sándwiches**: Lomito completo + fritas, Mila de pollo/ternera en tira de pan (entera y media), en pan de lomo, tostado de jamón y queso.
+- **🍴 Minutas**: Mila de pollo/ternera al plato, Napolitana, Combos para compartir de 4 variedades con fritas, Porción de fritas grande.
+- **🍝 Pastas Caseras**: Tallarines, Ravioles, Ñoquis caseros.
+- **🥧 Tartas**: Entera, 1/2 tarta, 1/2 tarta de jamón y queso + fritas.
+- **🥔 Tortillas**: Tortilla de papa clásica, Tortilla de papas con supremas.
+- **🥤 Bebidas & 🍨 Postres**: Gaseosas 1.5L/2.25L, Cervezas 1L, Aguas, Flan casero mixto, Budín de pan.
+- **Orden inteligente**: los platos que el comercio pausa o desactiva se mueven **automáticamente al último lugar** de la lista.
 
-### 3. 🛵 Retiro por Local (Takeaway) y Envío a Domicilio (Delivery)
-- Selector de entrega rápido.
-- En modo Delivery solicita: Calle, Número, Piso/Depto y Entre Calles.
-- Suma el costo de envío configurable al total del pedido.
+### 5. 🛵 Retiro (Takeaway) y Envío a Domicilio (Delivery)
+- Selector rápido: Retiro en local o Envío a domicilio.
+- En modo Delivery solicita: Calle, Número, Piso/Depto y Entre Calles, sumando el costo de envío configurable al total.
 
-### 4. 💵 Pago en Efectivo (con vuelto) o Transferencia / QR
-- **Efectivo**: El cliente indica con cuánto dinero paga (ej. *"Pago con $20.000"*) para que el repartidor o mostrador lleve el vuelto exacto listo.
-- **Transferencia**: Muestra el Alias / CVU de Mercado Pago o Banco y permite escanear QR de cobro inmediato.
+### 6. 💵 Pago en Efectivo (con cálculo de vuelto) o Transferencia / QR
+- **Efectivo**: el cliente indica con cuánto dinero paga (ej. *$20.000*) para que el repartidor o cajero lleve el vuelto preparado.
+- **Transferencia**: muestra Alias / CVU de Mercado Pago o Banco y código QR de cobro.
 
-### 5. 📲 Envío Limpio y Directo a WhatsApp
-- Genera un mensaje formateado, claro y prolijo listo para enviar al número del comercio.
-
-### 6. ⭐ Tarjeta de Fidelidad Digital (Sellos)
+### 7. ⭐ Tarjeta de Fidelidad Digital (Sellos)
 - Sistema estilo Wistamp / Puncheo 100% digital integrado.
-- Cantidad de sellos configurable por el dueño (ej. 6 u 8 compras).
-- Premio personalizable (ej. *"1 Docena de Empanadas Gratis"*).
-- Generador de QR y enlace directo para el cliente.
-- Animación de confeti al completar la tarjeta.
+- Cantidad de sellos y premio configurables por el dueño.
+- Lluvia de confeti al completar la tarjeta.
 
-### 7. ⚙️ Modo Gestión para el Dueño
-- Pausar / Activar platos al instante ("Agotado por hoy").
+### 8. 🛠️ Panel de Gestión para el Dueño
+- Pausar platos al instante ("Agotado por hoy").
 - Modificar precios en segundos.
-- Agregar nuevos platos y nuevas variedades de empanadas.
-- Exportar planilla de menú en Excel / CSV.
-- Backup y restauración de datos.
+- Agregar nuevos platos y variedades de empanadas.
+- Subir o cambiar logo del comercio.
+- Exportar planilla de menú en Excel / CSV y descargar copias de seguridad en JSON.
 
 ---
 
-## 🚀 Despliegue y Acceso
+## 🚀 Enlaces de Acceso
+- **App en Vivo**: `https://juancdgo.github.io/rotiseria/`
+- **Armador de Empanadas**: `https://juancdgo.github.io/rotiseria/?view=empanadas`
+- **Tarjeta de Fidelidad**: `https://juancdgo.github.io/rotiseria/?view=fidelidad`
 - **Repositorio**: `https://github.com/JuanCDgo/rotiseria`
-- **Página en Vivo**: `https://juancdgo.github.io/rotiseria/`
