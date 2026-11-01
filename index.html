@@ -2327,6 +2327,16 @@
       renderCategoryChips();
       renderMenuCatalog();
 
+      // Parámetros de URL para accesos directos
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'empanadas' || params.has('empanadas')) {
+        setTimeout(() => openEmpanadaBuilder(), 250);
+      } else if (params.get('view') === 'fidelidad' || params.get('view') === 'loyalty' || params.has('loyalty')) {
+        setTimeout(() => openCustomerLoyaltyCard(), 250);
+      } else if (params.get('view') === 'admin' || params.has('admin') || params.has('gestion')) {
+        setTimeout(() => openOwnerSettingsModal(), 250);
+      }
+
       // Si hay red, sincronización silenciosa periódica
       if (navigator.onLine) {
         setTimeout(() => syncToGoogleDriveNow(false), 2000);
