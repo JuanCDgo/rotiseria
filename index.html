@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#1C1917">
+  <title>Rotisería & Minutas · Don Pepe | Menú y Pedidos Online</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#FFF7ED',
+              100: '#FFEDD5',
+              200: '#FED7AA',
+              300: '#FDBA74',
+              400: '#FB923C',
+              500: '#F97316',
+              600: '#EA580C',
+              700: '#C2410C',
+              800: '#9A3412',
+              900: '#7C2D12',
+            },
+            warmStone: {
+              850: '#24211E',
+              900: '#1C1917',
+              950: '#12100E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #0F0E0D;
+      color: #1C1917;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 20px -2px rgba(124, 45, 18, 0.06), 0 2px 6px -1px rgba(124, 45, 18, 0.04);
+    }
+    .modal-backdrop {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    @keyframes pulse-slow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .pulse-slow {
+      animation: pulse-slow 2.5s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- QRCode Library (local with CDN fallback) -->
+  <script src="qrcode.min.js"></script>
+  <script>
+    if (typeof QRCode === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      document.head.appendChild(s);
+    }
+  </script>
+</head>
+<body class="min-h-screen flex justify-center items-start sm:py-6">
+
+  <!-- Main Mobile Frame Container -->
+  <div class="w-full max-w-md bg-[#FAF8F5] min-h-screen sm:min-h-[880px] sm:rounded-[36px] sm:shadow-2xl sm:border-[6px] sm:border-[#262320] flex flex-col relative overflow-hidden pb-28">
+
+    <!-- ========================================== -->
+    <!-- HEADER BAR: ESTADO, LOCAL & CONTROLES      -->
+    <!-- ========================================== -->
+    <header class="bg-[#1C1917] text-white pt-5 px-4 pb-4 sticky top-0 z-20 shadow-md">
+      <!-- Top mini bar: estado abierto y horarios -->
+      <div class="flex items-center justify-between text-[11px] pb-2 border-b border-stone-800">
+        <div class="flex items-center gap-1.5 font-bold">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-emerald-400 font-extrabold uppercase tracking-wider" id="headerStatusText">Abierto para Takeaway & Envío</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Botón Switch Modo Dueño -->
+          <button 
+            onclick="toggleOwnerMode()" 
+            id="btnOwnerToggle"
+            class="px-2 py-0.5 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white font-extrabold text-[10px] border border-stone-700 transition-colors flex items-center gap-1"
+            title="Alternar entre vista de cliente y modo administrador"
+          >
+            <span>👨‍🍳</span>
+            <span id="ownerToggleLabel">Modo Dueño: OFF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nombre del local y acciones principales -->
+      <div class="flex items-center justify-between mt-3">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 p-0.5 shadow-md flex-shrink-0 flex items-center justify-center text-2xl font-black">
+            🍗
+          </div>
+          <div>
+            <h1 class="text-lg font-black tracking-tight text-white leading-tight" id="headerBusinessName">
+              Rotisería · Don Pepe
+            </h1>
+            <p class="text-xs text-amber-400/90 font-semibold flex items-center gap-1.5 mt-0.5">
+              <span>Comida casera para llevar</span>
+              <span class="text-stone-600">·</span>
+              <span class="text-stone-300" id="headerAddressText">Av. San Martín 1420</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <!-- QR para vidriera / mostrador -->
+          <button 
+            onclick="openWindowQrModal()" 
+            class="w-9 h-9 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-400 hover:bg-stone-700 active:scale-95 transition-all shadow-sm" 
+            title="QR para pegar en la vidriera o mostrador"
+          >
+            <span class="text-sm font-black">📷</span>
+          </button>
+
+          <!-- Ajustes del negocio (visible para el dueño) -->
+          <button 
+            onclick="openOwnerSettingsModal()" 
+            class="w-9 h-9 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-300 hover:bg-stone-700 active:scale-95 transition-all shadow-sm" 
+            title="Ajustes del local y precios"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de aviso Modo Dueño (se activa solo en modo admin) -->
+      <div id="ownerModeBanner" class="mt-3 py-1.5 px-3 bg-amber-500/20 border border-amber-500/40 rounded-xl text-amber-300 text-xs font-bold flex items-center justify-between hidden">
+        <span>👨‍🍳 Modo Dueño: podés pausar platos, cambiar precios y crear comidas.</span>
+        <button onclick="openNewDishModal()" class="px-2 py-0.5 bg-amber-500 text-stone-950 font-black rounded-lg text-[10px] shadow-sm">
+          + Nuevo Plato
+        </button>
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- BARRA DE BÚSQUEDA Y CATEGORÍAS             -->
+    <!-- ========================================== -->
+    <div class="px-4 pt-3 pb-2 bg-[#FAF8F5] sticky top-[105px] z-10 border-b border-stone-200/80 shadow-xs">
+      <!-- Buscador -->
+      <div class="relative">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-sm">🔍</span>
+        <input 
+          type="text" 
+          id="menuSearchInput" 
+          oninput="renderMenuCatalog()" 
+          placeholder="Buscar empanadas, milanesas, tartas..." 
+          class="w-full pl-9 pr-3.5 py-2 rounded-2xl bg-white border border-stone-200 text-xs font-medium text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm"
+        >
+      </div>
+
+      <!-- Filtro horizontal de categorías -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2.5 pb-1" id="categoryChipsContainer">
+        <!-- Render dinámico de categorías -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL: CATÁLOGO DEL MENÚ     -->
+    <!-- ========================================== -->
+    <main class="flex-1 p-4 space-y-4">
+      
+      <!-- BANNER DE EMPANADAS (EL ARMADOR INTELIGENTE) -->
+      <section id="empanadasPromoBanner" class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white p-4 rounded-3xl shadow-lg relative overflow-hidden">
+        <div class="relative z-10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2 py-0.5 rounded-full bg-black/25 text-[10px] font-black uppercase tracking-wider text-amber-200">
+              🥟 Especialidad de la casa
+            </span>
+            <span class="text-xs font-bold text-amber-100" id="empanadaBannerPrice">Docena $14.000</span>
+          </div>
+
+          <div>
+            <h2 class="text-base font-black leading-tight">Armá tu Docena o Media a Gusto</h2>
+            <p class="text-xs text-amber-100 font-medium mt-0.5">
+              Elegí las cantidades exactas de tus gustos favoritos con freno inteligente.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button 
+              onclick="openEmpanadaBuilder(12)" 
+              class="py-2.5 px-3 bg-white hover:bg-amber-50 text-orange-950 font-black text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-1"
+            >
+              <span>🥟 1 Docena (12)</span>
+            </button>
+            <button 
+              onclick="openEmpanadaBuilder(6)" 
+              class="py-2.5 px-3 bg-black/20 hover:bg-black/30 border border-white/30 text-white font-black text-xs rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1"
+            >
+              <span>🥟 1/2 Docena (6)</span>
+            </button>
+          </div>
+
+          <!-- Botón para que el dueño gestione gustos en modo admin -->
+          <div id="ownerEmpanadasConfigBtn" class="pt-1 text-center hidden">
+            <button onclick="openEmpanadaFlavorsManager()" class="text-[11px] underline font-bold text-amber-200 hover:text-white">
+              ⚙️ Gestionar gustos disponibles (activar/pausar)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BANNER CLUB DE FIDELIDAD -->
+      <section class="bg-stone-900 text-stone-200 p-3.5 rounded-2xl border border-stone-800 shadow-sm flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">🎁</span>
+          <div>
+            <span class="text-xs font-black text-amber-400 block" id="loyaltyTitleHint">Club de Fidelidad Rotisería</span>
+            <span class="text-[11px] text-stone-400" id="loyaltySubHint">Cada 6 pedidos te regalamos 1/2 docena de empanadas</span>
+          </div>
+        </div>
+        <button 
+          onclick="openCustomerLoyaltyCard()" 
+          class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs rounded-xl shrink-0 active:scale-95 transition-all shadow-sm"
+        >
+          Mi Tarjeta 📲
+        </button>
+      </section>
+
+      <!-- CATÁLOGO DE COMIDAS AGRUPADO -->
+      <div id="catalogItemsContainer" class="space-y-5">
+        <!-- Renderizado dinámico de comidas -->
+      </div>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- BARRA FLOTANTE INFERIOR DE CARRITO         -->
+    <!-- ========================================== -->
+    <div id="floatingCartBar" class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/95 to-transparent z-30 flex items-center justify-center pointer-events-none transition-transform duration-300 translate-y-24">
+      <button 
+        onclick="openCartModal()" 
+        class="pointer-events-auto w-full max-w-sm bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 hover:from-orange-500 hover:to-amber-500 text-white py-3.5 px-5 rounded-2xl font-black text-sm shadow-2xl active:scale-[0.98] transition-all flex items-center justify-between"
+      >
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🛒</span>
+          <span id="floatingCartCount" class="bg-white/20 px-2 py-0.5 rounded-full text-xs font-black">0 comidas</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="floatingCartTotal" class="text-base font-black">$ 0</span>
+          <span class="text-xs bg-white text-orange-950 px-2.5 py-1 rounded-xl font-black">Ver Pedido →</span>
+        </div>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ARMADOR DE EMPANADAS CON FRENO      -->
+  <!-- ========================================== -->
+  <div id="empanadaBuilderModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-5 shadow-2xl flex flex-col space-y-4">
+      
+      <!-- Encabezado con contador y freno -->
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-orange-700" id="builderTargetTitle">Armá tu Docena (12)</span>
+          <h3 class="text-lg font-black text-stone-900" id="builderStatusCount">Llevás: 0 de 12</h3>
+        </div>
+        <button onclick="closeEmpanadaBuilder()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Barra de llenado dinámica -->
+      <div class="space-y-1">
+        <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden border border-stone-200">
+          <div id="builderProgressBar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+        </div>
+        <p class="text-center text-xs font-bold text-stone-500" id="builderRemainingHint">
+          Elegí los gustos con (+) hasta completar las 12 empanadas.
+        </p>
+      </div>
+
+      <!-- Lista de gustos de empanadas -->
+      <div id="builderFlavorsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+        <!-- Render dinámico de gustos -->
+      </div>
+
+      <!-- Botón Gigante de confirmación (se activa cuando llega al total exacto) -->
+      <div class="pt-2">
+        <button 
+          id="btnConfirmEmpanadas" 
+          onclick="confirmEmpanadaSelection()" 
+          disabled
+          class="w-full py-3.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-md bg-stone-200 text-stone-400 cursor-not-allowed"
+        >
+          <span>✓ Completá las 12 para agregar</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CARRITO Y ENVÍO POR WHATSAPP        -->
+  <!-- ========================================== -->
+  <div id="cartModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-5 shadow-2xl flex flex-col space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🛒</span>
+          <div>
+            <h3 class="text-base font-black text-stone-900">Tu Pedido</h3>
+            <p class="text-[11px] text-stone-500">Revisá los platos antes de enviar a WhatsApp</p>
+          </div>
+        </div>
+        <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Lista de ítems en el carrito -->
+      <div id="cartItemsList" class="space-y-2.5 max-h-[35vh] overflow-y-auto pr-1">
+        <!-- Render de comidas agregadas -->
+      </div>
+
+      <!-- Formulario de Entrega & Pago -->
+      <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-3">
+        <!-- Nombre de la persona -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">¿A nombre de quién?</label>
+          <input 
+            type="text" 
+            id="orderCustomerName" 
+            placeholder="Tu nombre (ej: Lucas)" 
+            class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+          >
+        </div>
+
+        <!-- Modalidad de entrega: Takeaway vs Delivery -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">¿Cómo retirás tu pedido?</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer bg-white border-stone-200 hover:border-orange-500 transition-colors" id="takeawayOptionLabel">
+              <input type="radio" name="deliveryType" value="takeaway" checked onchange="toggleDeliveryInputs(false)">
+              <span class="text-xs font-bold text-stone-900">🚶 Retiro en local</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer bg-white border-stone-200 hover:border-orange-500 transition-colors" id="deliveryOptionLabel">
+              <input type="radio" name="deliveryType" value="delivery" onchange="toggleDeliveryInputs(true)">
+              <span class="text-xs font-bold text-stone-900">🛵 Envío a domicilio</span>
+            </label>
+          </div>
+
+          <!-- Campos para envío a domicilio -->
+          <div id="deliveryFieldsContainer" class="mt-2.5 space-y-2 hidden">
+            <div>
+              <label class="block text-[10px] font-bold text-stone-500 uppercase mb-0.5">Dirección y Altura</label>
+              <input 
+                type="text" 
+                id="orderAddress" 
+                placeholder="Calle y número (ej: San Martín 1540)" 
+                class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-semibold bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              >
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-stone-500 uppercase mb-0.5">Piso / Depto / Aclaraciones</label>
+              <input 
+                type="text" 
+                id="orderAddressNotes" 
+                placeholder="Piso 2 Depto B, timbre sonoro..." 
+                class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-medium bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              >
+            </div>
+            <p class="text-[11px] text-orange-700 font-bold" id="deliveryFeeNotice">
+              Costo de envío estimado: +$1.200
+            </p>
+          </div>
+        </div>
+
+        <!-- Forma de Pago -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">¿Cómo abonás?</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer bg-white border-stone-200 hover:border-orange-500 transition-colors">
+              <input type="radio" name="paymentMethod" value="efectivo" checked onchange="togglePaymentInputs('efectivo')">
+              <span class="text-xs font-bold text-stone-900">💵 Efectivo</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer bg-white border-stone-200 hover:border-orange-500 transition-colors">
+              <input type="radio" name="paymentMethod" value="transferencia" onchange="togglePaymentInputs('transferencia')">
+              <span class="text-xs font-bold text-stone-900">💳 Mercado Pago / Alias</span>
+            </label>
+          </div>
+
+          <div id="cashChangeContainer" class="mt-2">
+            <input 
+              type="text" 
+              id="cashChangeInput" 
+              placeholder="¿Abonás con billete exacto o necesitás cambio? (Ej: Pago con $20.000)" 
+              class="w-full px-3 py-1.5 rounded-xl border border-stone-200 text-xs bg-white focus:outline-none"
+            >
+          </div>
+
+          <div id="transferAliasContainer" class="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1 hidden">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-950">Alias para transferir:</span>
+              <strong class="text-emerald-700 font-mono" id="cartDisplayAlias">rotiseria.donpepe.mp</strong>
+            </div>
+            <p class="text-[10px] text-emerald-600">Por favor envianos el comprobante por WhatsApp una vez hecha la transferencia.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Totales -->
+      <div class="pt-2 border-t border-stone-200 space-y-1.5 text-xs">
+        <div class="flex justify-between text-stone-500 font-medium">
+          <span>Subtotal comidas:</span>
+          <span id="cartSubtotalText">$ 0</span>
+        </div>
+        <div id="cartDeliveryRow" class="flex justify-between text-stone-500 font-medium hidden">
+          <span>Costo de envío:</span>
+          <span id="cartDeliveryText">$ 0</span>
+        </div>
+        <div class="flex justify-between text-base font-black text-stone-900 pt-1 border-t border-stone-200">
+          <span>Total a Pagar:</span>
+          <span class="text-orange-600" id="cartTotalText">$ 0</span>
+        </div>
+      </div>
+
+      <!-- Botón Verde Gigante de Envío a WhatsApp -->
+      <div class="pt-1">
+        <button 
+          onclick="submitOrderToWhatsApp()" 
+          class="w-full py-4 bg-[#25D366] hover:bg-[#20BA5A] text-white font-black text-sm rounded-2xl shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.766-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.347.491 1.198.534 1.285.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.087-.179.182-.077.357.101.174.453.747.971 1.209.667.593 1.229.777 1.403.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.044.073.044.42-.1.825zM12.012 2C6.489 2 2 6.488 2 12.011c0 1.99.585 3.847 1.597 5.419L2 22l4.71-1.547c1.517.944 3.303 1.488 5.302 1.488 5.523 0 10.012-4.488 10.012-10.011C22.024 6.488 17.535 2 12.012 2z"/>
+          </svg>
+          <span>Confirmar y Enviar Pedido por WhatsApp</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: AGREGAR / EDITAR PLATO              -->
+  <!-- ========================================== -->
+  <div id="dishModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-5 shadow-2xl flex flex-col space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <h3 class="text-base font-black text-stone-900" id="dishModalTitle">Agregar Comida / Plato</h3>
+        <button onclick="closeDishModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <form id="dishForm" onsubmit="saveDishItem(event)" class="space-y-3.5">
+        <input type="hidden" id="editDishId">
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Nombre del Plato</label>
+          <input 
+            type="text" 
+            id="dishNameInput" 
+            required 
+            placeholder="Ej: Sándwich de Lomo Completo" 
+            class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 font-bold text-xs bg-stone-50 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+          >
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Categoría</label>
+            <input 
+              type="text" 
+              id="dishCategoryInput" 
+              required 
+              list="categoriesDatalist"
+              placeholder="Ej: Sándwiches" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 font-bold text-xs bg-stone-50 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+            <datalist id="categoriesDatalist">
+              <option value="Sándwiches & Minutas">
+              <option value="Platos del Día">
+              <option value="Tartas Caseras">
+              <option value="Guarniciones">
+              <option value="Bebidas">
+              <option value="Postres">
+            </datalist>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Precio ($)</label>
+            <input 
+              type="number" 
+              id="dishPriceInput" 
+              required 
+              placeholder="Ej: 8500" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 font-black text-xs bg-stone-50 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-700"
+            >
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div class="col-span-2">
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Descripción / Ingredientes</label>
+            <input 
+              type="text" 
+              id="dishDescriptionInput" 
+              placeholder="Ej: Con lechuga, tomate, jamón, queso y huevo frito" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs bg-stone-50 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Icono / Emoji</label>
+            <input 
+              type="text" 
+              id="dishEmojiInput" 
+              value="🍽️" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 text-center font-bold text-base bg-stone-50 focus:bg-white focus:outline-none"
+            >
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center gap-2">
+          <button 
+            type="button" 
+            onclick="deleteCurrentDish()" 
+            id="btnDeleteDish" 
+            class="py-2.5 px-3 rounded-xl border border-rose-200 text-rose-600 font-bold text-xs hover:bg-rose-50 hidden"
+          >
+            Eliminar
+          </button>
+          <button 
+            type="submit" 
+            class="flex-1 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs shadow-md active:scale-95 transition-all"
+          >
+            Guardar Plato en el Menú ✓
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: GESTIONAR GUSTOS DE EMPANADAS       -->
+  <!-- ========================================== -->
+  <div id="empanadaFlavorsModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-5 shadow-2xl flex flex-col space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <div>
+          <h3 class="text-base font-black text-stone-900">Gustos de Empanadas</h3>
+          <p class="text-[11px] text-stone-500">Activá, pausá o agregá variedades a la docena</p>
+        </div>
+        <button onclick="closeEmpanadaFlavorsModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Lista de gustos con switch de activo/pausado -->
+      <div id="empanadaManagerList" class="space-y-2 max-h-[45vh] overflow-y-auto pr-1">
+        <!-- Render dinámico -->
+      </div>
+
+      <!-- Formulario para agregar un nuevo gusto -->
+      <div class="pt-2 border-t border-stone-200">
+        <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Agregar nueva variedad</label>
+        <div class="flex gap-2">
+          <input 
+            type="text" 
+            id="newFlavorNameInput" 
+            placeholder="Ej: Matambre a la pizza, Bondiola..." 
+            class="flex-1 px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-stone-50 focus:bg-white focus:outline-none"
+          >
+          <button 
+            type="button" 
+            onclick="addNewEmpanadaFlavor()" 
+            class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow-sm active:scale-95 transition-all"
+          >
+            + Agregar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: AJUSTES DEL NEGOCIO & PRECIOS       -->
+  <!-- ========================================== -->
+  <div id="ownerSettingsModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-5 shadow-2xl flex flex-col space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <h3 class="text-base font-black text-stone-900">Ajustes de la Rotisería</h3>
+        <button onclick="closeOwnerSettingsModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Nombre del Local</label>
+          <input 
+            type="text" 
+            id="settingBusinessName" 
+            value="Rotisería · Don Pepe" 
+            class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-stone-50 focus:bg-white focus:outline-none"
+          >
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">WhatsApp para Pedidos (con código de área)</label>
+          <input 
+            type="tel" 
+            id="settingBusinessPhone" 
+            placeholder="Ej: 5491122334455" 
+            class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-stone-50 focus:bg-white focus:outline-none"
+          >
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-stone-600 uppercase mb-1">Dirección del Local</label>
+            <input 
+              type="text" 
+              id="settingBusinessAddress" 
+              value="Av. San Martín 1420" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-semibold bg-stone-50 focus:bg-white focus:outline-none"
+            >
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-stone-600 uppercase mb-1">Costo de Envío ($)</label>
+            <input 
+              type="number" 
+              id="settingDeliveryFee" 
+              value="1200" 
+              class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-semibold bg-stone-50 focus:bg-white focus:outline-none"
+            >
+          </div>
+        </div>
+
+        <!-- Precios de Empanadas -->
+        <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 space-y-2.5">
+          <label class="block text-xs font-black text-amber-950 uppercase tracking-wider">🥟 Precios de Empanadas</label>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[10px] text-amber-800 font-bold block mb-0.5">Precio 1 Docena (12)</span>
+              <input 
+                type="number" 
+                id="settingPriceDozen" 
+                value="14000" 
+                class="w-full px-3 py-1.5 rounded-xl border border-amber-300 text-xs font-black text-amber-950 bg-white"
+              >
+            </div>
+            <div>
+              <span class="text-[10px] text-amber-800 font-bold block mb-0.5">Precio 1/2 Docena (6)</span>
+              <input 
+                type="number" 
+                id="settingPriceHalf" 
+                value="7500" 
+                class="w-full px-3 py-1.5 rounded-xl border border-amber-300 text-xs font-black text-amber-950 bg-white"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Datos de Cobro (Alias y Titular) -->
+        <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 space-y-2.5">
+          <label class="block text-xs font-black text-emerald-950 uppercase tracking-wider">💳 Datos de Cobro (Mercado Pago / Banco)</label>
+          <div>
+            <span class="text-[10px] text-emerald-800 font-bold block mb-0.5">Tu Alias o CVU</span>
+            <input 
+              type="text" 
+              id="settingPaymentAlias" 
+              value="rotiseria.donpepe.mp" 
+              class="w-full px-3 py-1.5 rounded-xl border border-emerald-300 text-xs font-bold text-emerald-950 bg-white"
+            >
+          </div>
+          <div>
+            <span class="text-[10px] text-emerald-800 font-bold block mb-0.5">Nombre del Titular de la cuenta</span>
+            <input 
+              type="text" 
+              id="settingPaymentHolder" 
+              value="José Rossi" 
+              class="w-full px-3 py-1.5 rounded-xl border border-emerald-300 text-xs font-bold text-emerald-950 bg-white"
+            >
+          </div>
+        </div>
+
+        <!-- Programa de Fidelidad Gastronómica -->
+        <div class="bg-stone-100 p-3.5 rounded-2xl border border-stone-200 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-stone-900 uppercase tracking-wider">🎁 Programa de Fidelidad</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="settingLoyaltyToggle" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+            </label>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[10px] text-stone-600 font-bold block mb-0.5">Compras requeridas</span>
+              <select id="settingLoyaltyTarget" class="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold bg-white">
+                <option value="4">4 pedidos</option>
+                <option value="6" selected>6 pedidos</option>
+                <option value="8">8 pedidos</option>
+                <option value="10">10 pedidos</option>
+              </select>
+            </div>
+            <div>
+              <span class="text-[10px] text-stone-600 font-bold block mb-0.5">Premio ofrecido</span>
+              <input 
+                type="text" 
+                id="settingLoyaltyReward" 
+                value="1/2 docena de empanadas o papas gratis" 
+                class="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold bg-white"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Respaldo Google Drive & Excel -->
+        <div class="bg-sky-50/70 p-3.5 rounded-2xl border border-sky-200 space-y-2">
+          <span class="text-xs font-black text-sky-950 uppercase tracking-wider block">☁️ Respaldo y Copias de Seguridad</span>
+          <p class="text-[11px] text-sky-800">Carpeta: <strong>Copia de seguridad Rotiseria</strong></p>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button type="button" onclick="syncToGoogleDriveNow(true)" class="py-2 px-3 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-sm">
+              Sincronizar Drive
+            </button>
+            <button type="button" onclick="exportMenuToCSV()" class="py-2 px-3 bg-white hover:bg-sky-100 text-sky-900 border border-sky-300 font-bold text-xs rounded-xl shadow-sm">
+              Planilla Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="resetDemoMenuData()" class="py-2.5 px-3 rounded-xl border border-stone-200 text-stone-500 font-bold text-xs hover:bg-stone-100">
+            Restaurar Menú Original
+          </button>
+          <button type="button" onclick="saveOwnerSettings()" class="flex-1 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow-md active:scale-95 transition-all">
+            Guardar Ajustes ✓
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: QR PARA VIDRIERA Y MOSTRADOR        -->
+  <!-- ========================================== -->
+  <div id="windowQrModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-6 shadow-2xl flex flex-col space-y-4 text-center">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-stone-200">
+        <div class="text-left">
+          <h3 class="text-base font-black text-stone-900">QR para Vidriera y Mostrador</h3>
+          <p class="text-[11px] text-stone-500">Pegalo en la puerta para que el barrio escanee el menú</p>
+        </div>
+        <button onclick="closeWindowQrModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-2">
+        <div class="bg-white p-4 rounded-3xl shadow-xl border-2 border-stone-200 inline-block">
+          <div id="windowQrCodeContainer" class="w-[200px] h-[200px] flex items-center justify-center"></div>
+        </div>
+        <h4 class="font-black text-stone-900 text-base mt-3" id="qrSalonTitle">Rotisería · Don Pepe</h4>
+        <p class="text-xs text-stone-500 mt-0.5 max-w-[260px]">
+          Los clientes escanean este código con la cámara y ven el menú actualizado con precios al instante.
+        </p>
+      </div>
+
+      <div class="bg-stone-50 p-2.5 rounded-2xl border border-stone-200 flex items-center justify-between gap-2 text-left">
+        <span id="windowMenuUrlText" class="text-[11px] font-mono text-stone-500 truncate flex-1">https://...</span>
+        <button 
+          onclick="copyWindowMenuLink()" 
+          class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shrink-0 active:scale-95 transition-all shadow-sm"
+        >
+          Copiar Link
+        </button>
+      </div>
+
+      <button 
+        onclick="window.print()" 
+        class="w-full py-2.5 bg-stone-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition-all"
+      >
+        🖨️ Imprimir Cartel con QR
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: TARJETA DE FIDELIDAD DEL CLIENTE    -->
+  <!-- ========================================== -->
+  <div id="customerLoyaltyModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-6 shadow-2xl flex flex-col space-y-4">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-stone-200">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎁</span>
+          <div>
+            <h3 class="text-base font-black text-stone-900">Club de Fidelidad Rotisería</h3>
+            <p class="text-[11px] text-stone-500">Comé rico y sumá sellos por cada compra</p>
+          </div>
+        </div>
+        <button onclick="closeCustomerLoyaltyModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Tarjeta VIP con Confeti Canvas -->
+      <div class="bg-gradient-to-b from-stone-900 to-warmStone-900 text-white rounded-3xl p-5 border-2 border-amber-500/40 shadow-xl relative overflow-hidden space-y-3.5">
+        <canvas id="rotiseriaConfettiCanvas" class="absolute inset-0 pointer-events-none z-30 w-full h-full"></canvas>
+
+        <div class="flex items-center justify-between border-b border-stone-800 pb-2">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-amber-400 block">Tu Tarjeta Oficial</span>
+            <h4 class="text-base font-black text-white" id="loyaltyCardHolder">Cliente Fanático</h4>
+          </div>
+          <span class="text-xs font-black text-amber-400 bg-stone-800 px-2.5 py-0.5 rounded-full border border-stone-700" id="loyaltyStampsRatio">
+            0 / 6
+          </span>
+        </div>
+
+        <!-- Grid de sellos -->
+        <div id="loyaltyCustomerGrid" class="grid grid-cols-3 gap-2.5 py-1">
+          <!-- Render dinámico -->
+        </div>
+
+        <p class="text-center text-xs font-bold text-stone-300" id="loyaltyCardHint">
+          ¡Cada vez que hacés un pedido por WhatsApp sumás 1 sello!
+        </p>
+
+        <div class="bg-amber-950/40 border border-amber-500/50 rounded-2xl p-3 text-center space-y-0.5">
+          <span class="text-[10px] font-black uppercase tracking-wider text-amber-400 block">🎁 Tu Premio al Completar</span>
+          <p class="text-xs font-black text-white" id="loyaltyRewardDesc">1/2 docena de empanadas o papas gratis</p>
+        </div>
+
+        <div id="loyaltyRewardUnlockedBanner" class="bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 p-3 rounded-2xl text-center shadow-lg hidden font-black text-xs animate-bounce">
+          🏆 ¡PREMIO DESBLOQUEADO! Pedí por WhatsApp y reclamá tu premio gratis.
+        </div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <button 
+          onclick="claimLoyaltyRewardByWhatsApp()" 
+          id="btnClaimRotiseriaReward"
+          class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-xs rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 hidden"
+        >
+          <span>💬 Avisar por WhatsApp para canjear premio</span>
+        </button>
+
+        <button 
+          onclick="closeCustomerLoyaltyModal()" 
+          class="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-2xl active:scale-95 transition-all"
+        >
+          Volver al Menú
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT DE LA ROTISERÍA                 -->
+  <!-- ========================================== -->
+  <script>
+    // Configuración Inicial del Negocio
+    const AUTO_DRIVE_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzI2Bn0rj_MpW5lFhNJ2um2oEiwtSR4YRbfzedtoYL150rtvcKJ4go_bmLthl24xzMF2Q/exec';
+    const AUTO_DRIVE_FOLDER = 'Copia de seguridad Rotiseria';
+    const AUTO_DRIVE_FOLDER_ID = '1AnfiKqydi965S7bzlSJrRJSYZrfQSbgx';
+
+    const DEFAULT_SETTINGS = {
+      businessName: 'Rotisería · Don Pepe',
+      businessPhone: '5491122334455',
+      businessAddress: 'Av. San Martín 1420',
+      businessHours: 'Mar a Dom 11:30 a 14:30 hs y 19:30 a 23:30 hs',
+      isOpen: true,
+      paymentAlias: 'rotiseria.donpepe.mp',
+      paymentHolder: 'José Rossi',
+      deliveryFee: 1200,
+      allowDelivery: true,
+      allowTakeaway: true,
+      loyaltyEnabled: true,
+      loyaltyTarget: 6,
+      loyaltyReward: '1/2 docena de empanadas o papas gratis',
+      priceDozen: 14000,
+      priceHalf: 7500,
+      priceUnit: 1300,
+      driveWebhookUrl: AUTO_DRIVE_WEBHOOK,
+      driveFolderName: AUTO_DRIVE_FOLDER,
+      driveFolderId: AUTO_DRIVE_FOLDER_ID,
+      autoSyncDrive: true,
+      lastBackupDate: null
+    };
+
+    // Gustos de empanadas iniciales
+    const DEFAULT_EMPANADA_FLAVORS = [
+      { id: 'e1', name: 'Carne suave clásica', active: true },
+      { id: 'e2', name: 'Carne cortada a cuchillo picante', active: true },
+      { id: 'e3', name: 'Jamón y Queso bien relleno', active: true },
+      { id: 'e4', name: 'Pollo al verdeo', active: true },
+      { id: 'e5', name: 'Verdura y salsa blanca', active: true },
+      { id: 'e6', name: 'Choclo / Humita cremosa', active: true },
+      { id: 'e7', name: 'Roquefort con jamón cocido', active: true },
+      { id: 'e8', name: 'Caprese (Tomate, albahaca y muzzarella)', active: true },
+      { id: 'e9', name: 'Cebolla salteada y queso', active: true },
+      { id: 'e10', name: 'Calabaza y muzzarella', active: true }
+    ];
+
+    // Catálogo de platos de muestra representativos de Argentina
+    const DEFAULT_MENU_ITEMS = [
+      // Sándwiches & Minutas
+      {
+        id: 'm1',
+        name: 'Sándwich de Milanesa Completo',
+        category: 'Sándwiches & Minutas',
+        price: 8500,
+        description: 'Pan baguette crocante, milanesa de ternera, lechuga, tomate, jamón, queso y huevo frito.',
+        emoji: '🥪',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm2',
+        name: 'Sándwich de Lomo Completo',
+        category: 'Sándwiches & Minutas',
+        price: 10500,
+        description: 'Bife de lomo tierno a la plancha con lechuga, tomate, jamón, queso y huevo.',
+        emoji: '🥪',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm3',
+        name: 'Sándwich de Bondiola Braseada',
+        category: 'Sándwiches & Minutas',
+        price: 9200,
+        description: 'Bondiola de cerdo desmechada al horno con cebolla caramelizada y salsa barbacoa.',
+        emoji: '🥪',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm4',
+        name: 'Milanesa Napolitana con Papas Fritas',
+        category: 'Sándwiches & Minutas',
+        price: 11000,
+        description: 'Ternera tierna con salsa de tomate casera, jamón cocido y abundante muzzarella gratinada.',
+        emoji: '🥩',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm5',
+        name: 'Suprema Suiza con Fritas',
+        category: 'Sándwiches & Minutas',
+        price: 9800,
+        description: 'Pechuga grillada cubierta con salsa blanca cremosa, queso derretido y papas fritas.',
+        emoji: '🍗',
+        active: true,
+        outOfStock: false
+      },
+
+      // Platos del Día & Caseros
+      {
+        id: 'm6',
+        name: 'Pastel de Papas Casero',
+        category: 'Platos del Día',
+        price: 7800,
+        description: 'Relleno de carne picada jugosa, huevo, aceitunas y puré dorado al horno.',
+        emoji: '🥘',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm7',
+        name: 'Canelones de Verdura y Ricota (Porción 3)',
+        category: 'Platos del Día',
+        price: 7200,
+        description: 'Masa casera rellena con salsa mixta (tuco casero de carne y bechamel gratinada).',
+        emoji: '🍝',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm8',
+        name: 'Pollo al Spiedo con Papas Rústicas (1/2 Pollo)',
+        category: 'Platos del Día',
+        price: 9500,
+        description: 'Dorado al fuego con chimichurri casero y papas horneadas con romero.',
+        emoji: '🍗',
+        active: true,
+        outOfStock: false
+      },
+
+      // Tartas Caseras
+      {
+        id: 'm9',
+        name: 'Tarta Pascualina Individual',
+        category: 'Tartas Caseras',
+        price: 4200,
+        description: 'Masa hojaldrada casera, acelga fresca salteada, ricota y huevo entero.',
+        emoji: '🥧',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm10',
+        name: 'Tarta de Jamón, Queso y Tomate',
+        category: 'Tartas Caseras',
+        price: 4500,
+        description: 'Abundante queso muzzarella, jamón cocido y rodajas de tomate natural.',
+        emoji: '🥧',
+        active: true,
+        outOfStock: false
+      },
+
+      // Guarniciones
+      {
+        id: 'm11',
+        name: 'Porción de Papas Fritas Clásicas',
+        category: 'Guarniciones',
+        price: 3800,
+        description: 'Papas naturales cortadas a cuchillo, bien crocantes por fuera y tiernas por dentro.',
+        emoji: '🍟',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm12',
+        name: 'Papas Fritas con Cheddar y Panceta',
+        category: 'Guarniciones',
+        price: 5200,
+        description: 'Bañadas en salsa cheddar casera y lluvia de panceta crocante con verdeo.',
+        emoji: '🍟',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm13',
+        name: 'Ensalada Rusa Casera (Porción)',
+        category: 'Guarniciones',
+        price: 3200,
+        description: 'Cubos de papa, zanahoria y arvejas tiernas con mayonesa suave.',
+        emoji: '🥗',
+        active: true,
+        outOfStock: false
+      },
+
+      // Bebidas
+      {
+        id: 'm14',
+        name: 'Coca Cola 1.5L',
+        category: 'Bebidas',
+        price: 2800,
+        description: 'Línea original bien helada.',
+        emoji: '🥤',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm15',
+        name: 'Cerveza Quilmes Clásica 1L',
+        category: 'Bebidas',
+        price: 3400,
+        description: 'Botella retornable fría.',
+        emoji: '🍺',
+        active: true,
+        outOfStock: false
+      },
+
+      // Postres
+      {
+        id: 'm16',
+        name: 'Flan Casero Mixto',
+        category: 'Postres',
+        price: 2500,
+        description: 'Hecho con 8 huevos, abundante caramelo, dulce de leche repostero y crema.',
+        emoji: '🍮',
+        active: true,
+        outOfStock: false
+      },
+      {
+        id: 'm17',
+        name: 'Budín de Pan al Caramelo con Crema',
+        category: 'Postres',
+        price: 2200,
+        description: 'Receta tradicional de la abuela, bien húmedo con pasas rubias.',
+        emoji: '🍮',
+        active: true,
+        outOfStock: false
+      }
+    ];
+
+    // ESTADO DE LA APLICACIÓN
+    let settings = Object.assign({}, DEFAULT_SETTINGS);
+    let empanadaFlavors = [...DEFAULT_EMPANADA_FLAVORS];
+    let menuItems = [...DEFAULT_MENU_ITEMS];
+    let cart = []; // [{ id, name, price, qty, details, isEmpanadaPack }]
+    let isOwnerMode = false;
+    let selectedCategory = 'Todos';
+
+    // Estado del Armador de Empanadas
+    let builderTarget = 12; // 6 o 12
+    let builderSelection = {}; // { flavorId: count }
+
+    // Estado de Fidelidad del Cliente (almacenado localmente en el celular del cliente)
+    let customerLoyalty = {
+      clientName: '',
+      stamps: 0,
+      orderCount: 0
+    };
+
+    // ==========================================
+    // PERSISTENCIA LOCAL (OFFLINE-FIRST)
+    // ==========================================
+    function loadLocalState() {
+      try {
+        const s = localStorage.getItem('rotiseria_settings');
+        if (s) settings = Object.assign({}, DEFAULT_SETTINGS, JSON.parse(s));
+
+        const f = localStorage.getItem('rotiseria_flavors');
+        if (f) empanadaFlavors = JSON.parse(f);
+
+        const m = localStorage.getItem('rotiseria_menu');
+        if (m) menuItems = JSON.parse(m);
+
+        const c = localStorage.getItem('rotiseria_cart');
+        if (c) cart = JSON.parse(c);
+
+        const l = localStorage.getItem('rotiseria_loyalty');
+        if (l) customerLoyalty = JSON.parse(l);
+      } catch (err) {
+        console.warn('Error reading localStorage, using defaults', err);
+      }
+    }
+
+    function saveLocalState() {
+      try {
+        localStorage.setItem('rotiseria_settings', JSON.stringify(settings));
+        localStorage.setItem('rotiseria_flavors', JSON.stringify(empanadaFlavors));
+        localStorage.setItem('rotiseria_menu', JSON.stringify(menuItems));
+        localStorage.setItem('rotiseria_cart', JSON.stringify(cart));
+        localStorage.setItem('rotiseria_loyalty', JSON.stringify(customerLoyalty));
+      } catch (err) {
+        console.warn('Error writing localStorage', err);
+      }
+    }
+
+    // ==========================================
+    // RENDERIZADO DEL MENÚ Y CATEGORÍAS
+    // ==========================================
+    function getCategoriesList() {
+      const cats = new Set(['Todos']);
+      menuItems.forEach(item => {
+        if (item.category) cats.add(item.category);
+      });
+      return Array.from(cats);
+    }
+
+    function renderCategoryChips() {
+      const container = document.getElementById('categoryChipsContainer');
+      const categories = getCategoriesList();
+
+      container.innerHTML = categories.map(cat => {
+        const isSelected = cat === selectedCategory;
+        return `
+          <button 
+            type="button" 
+            onclick="selectCategoryFilter('${cat}')" 
+            class="px-3.5 py-1.5 rounded-full text-xs font-black shrink-0 transition-all active:scale-95 ${
+              isSelected 
+                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30' 
+                : 'bg-white hover:bg-stone-100 text-stone-700 border border-stone-200'
+            }"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategoryFilter(cat) {
+      selectedCategory = cat;
+      renderCategoryChips();
+      renderMenuCatalog();
+    }
+
+    function renderMenuCatalog() {
+      const container = document.getElementById('catalogItemsContainer');
+      const searchQuery = (document.getElementById('menuSearchInput').value || '').toLowerCase().trim();
+
+      // ORDENAMIENTO REQUERIDO POR EL USUARIO:
+      // "las que desactiva al ultimo de una" -> Las comidas desactivadas van automáticamente al fondo!
+      const sortedItems = [...menuItems].sort((a, b) => {
+        if (a.active === b.active) {
+          // Si ambos están activos, los agotados van después
+          if (a.outOfStock === b.outOfStock) return 0;
+          return a.outOfStock ? 1 : -1;
+        }
+        return a.active ? -1 : 1;
+      });
+
+      // Filtrado por categoría y búsqueda
+      const filtered = sortedItems.filter(item => {
+        // En modo cliente, si está desactivado completamente por el dueño, se oculta del todo
+        if (!isOwnerMode && !item.active) return false;
+
+        const matchesCat = (selectedCategory === 'Todos') || (item.category === selectedCategory);
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery) || 
+                              (item.description || '').toLowerCase().includes(searchQuery) ||
+                              (item.category || '').toLowerCase().includes(searchQuery);
+        return matchesCat && matchesSearch;
+      });
+
+      // Agrupar por categoría
+      const grouped = {};
+      filtered.forEach(item => {
+        const cat = item.category || 'Varios';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(item);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 px-4 bg-white rounded-3xl border border-dashed border-stone-300">
+            <span class="text-4xl block mb-2">🍽️</span>
+            <p class="font-bold text-stone-700 text-sm">No encontramos comidas con ese nombre</p>
+            <p class="text-xs text-stone-400 mt-1">Probá cambiando la búsqueda o eligiendo otra categoría.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      for (const [catName, items] of Object.entries(grouped)) {
+        html += `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between pb-1 border-b border-stone-200">
+              <h3 class="text-sm font-black uppercase tracking-wider text-stone-800">${catName}</h3>
+              <span class="text-[11px] font-bold text-stone-400">${items.length} platos</span>
+            </div>
+
+            <div class="space-y-2.5">
+              ${items.map(item => renderDishCard(item)).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      updateFloatingCartBar();
+    }
+
+    function renderDishCard(item) {
+      const inCartItem = cart.find(c => c.id === item.id && !c.isEmpanadaPack);
+      const cartQty = inCartItem ? inCartItem.qty : 0;
+      const isUnavailable = !item.active || item.outOfStock;
+
+      return `
+        <div class="bg-white rounded-2xl p-3.5 border transition-all ${
+          !item.active 
+            ? 'opacity-60 bg-stone-100 border-stone-200' 
+            : item.outOfStock 
+              ? 'border-stone-200 bg-stone-50/60' 
+              : 'border-stone-200/90 hover:border-orange-500/50 card-shadow'
+        }">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 flex-1 min-w-0">
+              <span class="text-2xl p-2 rounded-xl bg-orange-50 shrink-0 select-none">${item.emoji || '🍽️'}</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <h4 class="font-black text-stone-900 text-sm leading-snug">${item.name}</h4>
+                  ${!item.active ? `
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-stone-200 text-stone-600">Pausado (Al fondo)</span>
+                  ` : item.outOfStock ? `
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700">Agotado por hoy</span>
+                  ` : ''}
+                </div>
+                ${item.description ? `
+                  <p class="text-xs text-stone-500 font-medium leading-relaxed mt-0.5 line-clamp-2">
+                    ${item.description}
+                  </p>
+                ` : ''}
+                
+                <div class="mt-2 flex items-center gap-2">
+                  <span class="text-sm font-black text-orange-700">$ ${item.price.toLocaleString('es-AR')}</span>
+                  ${isOwnerMode ? `
+                    <button onclick="quickEditPrice('${item.id}')" class="text-[10px] font-bold text-amber-600 underline">
+                      Cambiar $
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones del plato -->
+            <div class="shrink-0 flex flex-col items-end gap-1.5">
+              ${isOwnerMode ? `
+                <!-- Controles Modo Dueño -->
+                <div class="flex items-center gap-1">
+                  <!-- Botón activar/desactivar (pasa al fondo) -->
+                  <button 
+                    onclick="toggleDishActive('${item.id}')" 
+                    class="p-1.5 rounded-lg border text-xs font-bold ${
+                      item.active ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-stone-200 text-stone-600 border-stone-300'
+                    }"
+                    title="${item.active ? 'Pausar comida (pasa al fondo)' : 'Activar comida'}"
+                  >
+                    ${item.active ? '✓ Activo' : 'Pausado'}
+                  </button>
+
+                  <!-- Botón Agotado por hoy -->
+                  <button 
+                    onclick="toggleDishOutOfStock('${item.id}')" 
+                    class="p-1.5 rounded-lg border text-xs font-bold ${
+                      item.outOfStock ? 'bg-rose-100 text-rose-700 border-rose-300' : 'bg-stone-100 text-stone-600 border-stone-200'
+                    }"
+                    title="Alternar estado agotado"
+                  >
+                    ${item.outOfStock ? 'Agotado' : 'Disponible'}
+                  </button>
+
+                  <!-- Editar -->
+                  <button onclick="openEditDishModal('${item.id}')" class="p-1.5 rounded-lg bg-stone-100 text-stone-600 border border-stone-200 hover:text-black">
+                    ✏️
+                  </button>
+                </div>
+              ` : `
+                <!-- Controles Modo Cliente: Agregar al Carrito -->
+                ${isUnavailable ? `
+                  <span class="px-2.5 py-1.5 bg-stone-100 text-stone-400 font-bold text-xs rounded-xl border border-stone-200">
+                    Agotado
+                  </span>
+                ` : cartQty > 0 ? `
+                  <div class="flex items-center gap-1.5 bg-orange-50 border border-orange-300 rounded-xl p-1">
+                    <button onclick="updateCartItemQty('${item.id}', -1)" class="w-6 h-6 rounded-lg bg-white text-orange-800 font-black text-sm flex items-center justify-center shadow-xs active:scale-95">-</button>
+                    <span class="text-xs font-black text-orange-950 px-1">${cartQty}</span>
+                    <button onclick="updateCartItemQty('${item.id}', 1)" class="w-6 h-6 rounded-lg bg-orange-600 text-white font-black text-sm flex items-center justify-center shadow-xs active:scale-95">+</button>
+                  </div>
+                ` : `
+                  <button 
+                    onclick="addSimpleDishToCart('${item.id}')" 
+                    class="py-1.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-xl shadow-sm active:scale-95 transition-all flex items-center gap-1"
+                  >
+                    <span>+ Agregar</span>
+                  </button>
+                `}
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // ARMADOR DE EMPANADAS CON FRENO INTELIGENTE
+    // ==========================================
+    function openEmpanadaBuilder(target = 12) {
+      builderTarget = target;
+      builderSelection = {};
+      empanadaFlavors.forEach(f => {
+        builderSelection[f.id] = 0;
+      });
+
+      const modalTitle = target === 12 ? 'Armá tu Docena (12)' : 'Armá tu Media Docena (6)';
+      document.getElementById('builderTargetTitle').textContent = modalTitle;
+
+      renderEmpanadaBuilderFlavors();
+      updateEmpanadaBuilderProgress();
+      document.getElementById('empanadaBuilderModal').classList.remove('hidden');
+    }
+
+    function closeEmpanadaBuilder() {
+      document.getElementById('empanadaBuilderModal').classList.add('hidden');
+    }
+
+    function getBuilderCurrentSum() {
+      return Object.values(builderSelection).reduce((acc, count) => acc + (count || 0), 0);
+    }
+
+    function renderEmpanadaBuilderFlavors() {
+      const container = document.getElementById('builderFlavorsList');
+      const activeFlavors = empanadaFlavors.filter(f => f.active);
+
+      container.innerHTML = activeFlavors.map(flavor => {
+        const count = builderSelection[flavor.id] || 0;
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-stone-200 bg-stone-50/70 hover:bg-stone-50 transition-colors">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🥟</span>
+              <span class="font-black text-xs text-stone-800">${flavor.name}</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button 
+                type="button" 
+                onclick="changeFlavorCount('${flavor.id}', -1)" 
+                class="w-7 h-7 rounded-lg bg-white border border-stone-300 text-stone-800 font-black text-base flex items-center justify-center active:scale-95 shadow-xs"
+              >
+                -
+              </button>
+              <span class="w-6 text-center text-sm font-black text-orange-950">${count}</span>
+              <button 
+                type="button" 
+                onclick="changeFlavorCount('${flavor.id}', 1)" 
+                class="w-7 h-7 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-black text-base flex items-center justify-center active:scale-95 shadow-xs"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // EL FRENO: No permite pasarse de 6 o 12 empanadas
+    function changeFlavorCount(flavorId, delta) {
+      const currentSum = getBuilderCurrentSum();
+      const currentCount = builderSelection[flavorId] || 0;
+
+      if (delta > 0 && currentSum >= builderTarget) {
+        showToast(`¡Ya completaste las ${builderTarget} empanadas! No podés agregar más a este pack.`, '🥟');
+        // Efecto visual de rebote
+        const statusEl = document.getElementById('builderStatusCount');
+        statusEl.classList.add('scale-110', 'text-orange-600');
+        setTimeout(() => statusEl.classList.remove('scale-110', 'text-orange-600'), 300);
+        return;
+      }
+
+      if (delta < 0 && currentCount <= 0) return;
+
+      builderSelection[flavorId] = currentCount + delta;
+      renderEmpanadaBuilderFlavors();
+      updateEmpanadaBuilderProgress();
+    }
+
+    function updateEmpanadaBuilderProgress() {
+      const currentSum = getBuilderCurrentSum();
+      const pct = Math.min(100, Math.round((currentSum / builderTarget) * 100));
+
+      document.getElementById('builderProgressBar').style.width = `${pct}%`;
+      document.getElementById('builderStatusCount').textContent = `Llevás: ${currentSum} de ${builderTarget}`;
+
+      const remaining = builderTarget - currentSum;
+      const hintEl = document.getElementById('builderRemainingHint');
+      const btnConfirm = document.getElementById('btnConfirmEmpanadas');
+
+      if (currentSum === builderTarget) {
+        hintEl.textContent = '🎉 ¡Pack completo! Tocá el botón verde para agregarlo al pedido.';
+        hintEl.className = 'text-center text-xs font-black text-emerald-600';
+
+        const price = builderTarget === 12 ? (settings.priceDozen || 14000) : (settings.priceHalf || 7500);
+        btnConfirm.disabled = false;
+        btnConfirm.className = 'w-full py-4 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-xl bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95 pulse-slow';
+        btnConfirm.innerHTML = `<span>✓ Agregar ${builderTarget === 12 ? 'Docena' : 'Media Docena'} al Pedido ($${price.toLocaleString('es-AR')})</span>`;
+      } else {
+        hintEl.textContent = `Te falta${remaining === 1 ? '' : 'n'} ${remaining} empanada${remaining === 1 ? '' : 's'} para completar.`;
+        hintEl.className = 'text-center text-xs font-bold text-stone-500';
+
+        btnConfirm.disabled = true;
+        btnConfirm.className = 'w-full py-3.5 px-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-md bg-stone-200 text-stone-400 cursor-not-allowed';
+        btnConfirm.innerHTML = `<span>Completá las ${builderTarget} para agregar (Faltan ${remaining})</span>`;
+      }
+    }
+
+    function confirmEmpanadaSelection() {
+      const currentSum = getBuilderCurrentSum();
+      if (currentSum !== builderTarget) return;
+
+      const price = builderTarget === 12 ? (settings.priceDozen || 14000) : (settings.priceHalf || 7500);
+      const title = builderTarget === 12 ? 'Docena de Empanadas Surtidas' : 'Media Docena de Empanadas Surtidas';
+
+      // Construir resumen de gustos
+      const detailsList = [];
+      for (const [flavorId, count] of Object.entries(builderSelection)) {
+        if (count > 0) {
+          const flavor = empanadaFlavors.find(f => f.id === flavorId);
+          detailsList.push(`${count}x ${flavor ? flavor.name : 'Gusto'}`);
+        }
+      }
+
+      const packItem = {
+        id: 'pack_' + Date.now(),
+        name: title,
+        price: price,
+        qty: 1,
+        details: detailsList.join(', '),
+        isEmpanadaPack: true,
+        emoji: '🥟'
+      };
+
+      cart.push(packItem);
+      saveLocalState();
+      closeEmpanadaBuilder();
+      updateFloatingCartBar();
+      showToast(`¡${title} agregada al pedido! 🥟`, '✓');
+    }
+
+    // ==========================================
+    // CARRITO Y COMIDAS SIMPLES
+    // ==========================================
+    function addSimpleDishToCart(dishId) {
+      const dish = menuItems.find(m => m.id === dishId);
+      if (!dish || !dish.active || dish.outOfStock) return;
+
+      const existing = cart.find(c => c.id === dish.id && !c.isEmpanadaPack);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({
+          id: dish.id,
+          name: dish.name,
+          price: dish.price,
+          qty: 1,
+          details: dish.description || '',
+          isEmpanadaPack: false,
+          emoji: dish.emoji || '🍽️'
+        });
+      }
+
+      saveLocalState();
+      renderMenuCatalog();
+      showToast(`¡${dish.name} sumado al pedido!`, '🛒');
+    }
+
+    function updateCartItemQty(dishId, delta) {
+      const item = cart.find(c => c.id === dishId && !c.isEmpanadaPack);
+      if (!item) return;
+
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(c => c !== item);
+      }
+
+      saveLocalState();
+      renderMenuCatalog();
+    }
+
+    function removeCartIndex(idx) {
+      cart.splice(idx, 1);
+      saveLocalState();
+      renderCartModalItems();
+      renderMenuCatalog();
+    }
+
+    function getCartTotalCount() {
+      return cart.reduce((acc, item) => acc + item.qty, 0);
+    }
+
+    function getCartSubtotalPrice() {
+      return cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    }
+
+    function updateFloatingCartBar() {
+      const bar = document.getElementById('floatingCartBar');
+      const count = getCartTotalCount();
+      const total = getCartSubtotalPrice();
+
+      if (count > 0) {
+        bar.classList.remove('translate-y-24');
+        bar.classList.add('translate-y-0');
+        document.getElementById('floatingCartCount').textContent = `${count} comida${count === 1 ? '' : 's'}`;
+        document.getElementById('floatingCartTotal').textContent = `$ ${total.toLocaleString('es-AR')}`;
+      } else {
+        bar.classList.remove('translate-y-0');
+        bar.classList.add('translate-y-24');
+      }
+    }
+
+    // ==========================================
+    // MODAL DEL CARRITO Y PEDIDO POR WHATSAPP
+    // ==========================================
+    function openCartModal() {
+      if (cart.length === 0) {
+        showToast('El pedido está vacío. Agregá tus comidas primero.', '🛒');
+        return;
+      }
+
+      document.getElementById('cartDisplayAlias').textContent = settings.paymentAlias || 'rotiseria.donpepe.mp';
+      renderCartModalItems();
+      document.getElementById('cartModal').classList.remove('hidden');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.add('hidden');
+    }
+
+    function renderCartModalItems() {
+      const container = document.getElementById('cartItemsList');
+      if (cart.length === 0) {
+        closeCartModal();
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => {
+        return `
+          <div class="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-base">${item.emoji || '🍽️'}</span>
+                <span class="font-black text-xs text-stone-900">${item.name}</span>
+              </div>
+              ${item.details ? `
+                <p class="text-[11px] text-stone-500 font-medium mt-0.5 leading-snug">
+                  ${item.details}
+                </p>
+              ` : ''}
+              <span class="text-xs font-black text-orange-700 block mt-1">
+                $ ${(item.price * item.qty).toLocaleString('es-AR')}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              ${item.isEmpanadaPack ? `
+                <button onclick="removeCartIndex(${idx})" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs font-bold bg-white rounded-lg border border-stone-200">
+                  ✕ Quitar
+                </button>
+              ` : `
+                <div class="flex items-center gap-1 bg-white border border-stone-300 rounded-xl p-0.5">
+                  <button onclick="updateCartItemQty('${item.id}', -1)" class="w-6 h-6 rounded-lg text-stone-700 font-bold text-xs flex items-center justify-center">-</button>
+                  <span class="text-xs font-black text-stone-950 px-1">${item.qty}</span>
+                  <button onclick="updateCartItemQty('${item.id}', 1)" class="w-6 h-6 rounded-lg text-stone-700 font-bold text-xs flex items-center justify-center">+</button>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateCartTotalsDisplay();
+    }
+
+    function toggleDeliveryInputs(isDelivery) {
+      const container = document.getElementById('deliveryFieldsContainer');
+      const deliveryRow = document.getElementById('cartDeliveryRow');
+
+      if (isDelivery) {
+        container.classList.remove('hidden');
+        deliveryRow.classList.remove('hidden');
+        document.getElementById('deliveryFeeNotice').textContent = `Costo de envío estimado: +$ ${(settings.deliveryFee || 1200).toLocaleString('es-AR')}`;
+      } else {
+        container.classList.add('hidden');
+        deliveryRow.classList.add('hidden');
+      }
+      updateCartTotalsDisplay();
+    }
+
+    function togglePaymentInputs(method) {
+      const cashContainer = document.getElementById('cashChangeContainer');
+      const transferContainer = document.getElementById('transferAliasContainer');
+
+      if (method === 'efectivo') {
+        cashContainer.classList.remove('hidden');
+        transferContainer.classList.add('hidden');
+      } else {
+        cashContainer.classList.add('hidden');
+        transferContainer.classList.remove('hidden');
+      }
+    }
+
+    function updateCartTotalsDisplay() {
+      const subtotal = getCartSubtotalPrice();
+      const isDelivery = document.querySelector('input[name="deliveryType"]:checked')?.value === 'delivery';
+      const fee = isDelivery ? (settings.deliveryFee || 1200) : 0;
+      const total = subtotal + fee;
+
+      document.getElementById('cartSubtotalText').textContent = `$ ${subtotal.toLocaleString('es-AR')}`;
+      document.getElementById('cartDeliveryText').textContent = `$ ${fee.toLocaleString('es-AR')}`;
+      document.getElementById('cartTotalText').textContent = `$ ${total.toLocaleString('es-AR')}`;
+    }
+
+    // EL ENVÍO LIMPIO Y DETALLADO AL WHATSAPP DE LA ROTISERÍA
+    function submitOrderToWhatsApp() {
+      const name = (document.getElementById('orderCustomerName').value || '').trim();
+      if (!name) {
+        alert('Por favor ingresá tu nombre para saber a quién entregarle el pedido.');
+        document.getElementById('orderCustomerName').focus();
+        return;
+      }
+
+      const isDelivery = document.querySelector('input[name="deliveryType"]:checked')?.value === 'delivery';
+      const address = (document.getElementById('orderAddress')?.value || '').trim();
+      const addressNotes = (document.getElementById('orderAddressNotes')?.value || '').trim();
+
+      if (isDelivery && !address) {
+        alert('Por favor escribí la calle y número para que el repartidor sepa dónde llevarlo.');
+        document.getElementById('orderAddress').focus();
+        return;
+      }
+
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'efectivo';
+      const cashNotes = (document.getElementById('cashChangeInput')?.value || '').trim();
+
+      const subtotal = getCartSubtotalPrice();
+      const deliveryFee = isDelivery ? (settings.deliveryFee || 1200) : 0;
+      const total = subtotal + deliveryFee;
+
+      // Armar mensaje WhatsApp hiper prolijo
+      const salon = settings.businessName || 'Rotisería · Don Pepe';
+      let msg = `¡Hola *${salon}*! Quiero hacer el siguiente pedido:
+
+`;
+
+      cart.forEach(item => {
+        msg += `• *${item.qty}x ${item.name}* ($ ${(item.price * item.qty).toLocaleString('es-AR')})
+`;
+        if (item.details) {
+          msg += `   _${item.details}_
+`;
+        }
+      });
+
+      msg += `
+💰 *Subtotal comidas:* $ ${subtotal.toLocaleString('es-AR')}
+`;
+      if (isDelivery) {
+        msg += `🛵 *Envío a domicilio:* $ ${deliveryFee.toLocaleString('es-AR')}
+`;
+      }
+      msg += `🔥 *TOTAL A PAGAR: $ ${total.toLocaleString('es-AR')}*
+
+`;
+
+      msg += `👤 *Cliente:* ${name}
+`;
+      if (isDelivery) {
+        msg += `📍 *Entrega:* Envío a *${address}*${addressNotes ? ` (${addressNotes})` : ''}
+`;
+      } else {
+        msg += `🚶 *Entrega:* Paso a retirar por el local
+`;
+      }
+
+      if (paymentMethod === 'efectivo') {
+        msg += `💵 *Pago:* Efectivo${cashNotes ? ` (${cashNotes})` : ''}
+`;
+      } else {
+        msg += `💳 *Pago:* Transferencia / Mercado Pago (Alias: \`${settings.paymentAlias || 'rotiseria.donpepe.mp'}\`)
+`;
+      }
+
+      msg += `
+¿Me confirman demora estimada para tenerlo listo? ¡Muchas gracias!`;
+
+      // Registrar sello de fidelidad local al cliente
+      customerLoyalty.clientName = name;
+      customerLoyalty.orderCount += 1;
+      if (settings.loyaltyEnabled) {
+        customerLoyalty.stamps += 1;
+      }
+      saveLocalState();
+
+      // Enviar WhatsApp al teléfono del negocio
+      const cleanPhone = (settings.businessPhone || '5491122334455').replace(/[^0-9]/g, '');
+      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+
+      window.open(waUrl, '_blank');
+      closeCartModal();
+      cart = [];
+      saveLocalState();
+      renderMenuCatalog();
+      showToast('¡Pedido armado y enviado a WhatsApp! 🎉', '🍗');
+    }
+
+    // ==========================================
+    // MODO DUEÑO / ADMINISTRADOR
+    // ==========================================
+    function toggleOwnerMode() {
+      isOwnerMode = !isOwnerMode;
+      const label = document.getElementById('ownerToggleLabel');
+      const banner = document.getElementById('ownerModeBanner');
+      const empanadaConfig = document.getElementById('ownerEmpanadasConfigBtn');
+
+      if (isOwnerMode) {
+        label.textContent = 'Modo Dueño: ON';
+        banner.classList.remove('hidden');
+        empanadaConfig.classList.remove('hidden');
+        showToast('Modo Dueño activado: podés pausar platos, editar precios y comidas.', '👨‍🍳');
+      } else {
+        label.textContent = 'Modo Dueño: OFF';
+        banner.classList.add('hidden');
+        empanadaConfig.classList.add('hidden');
+        showToast('Modo Cliente activado.', '👁️');
+      }
+
+      renderMenuCatalog();
+    }
+
+    function toggleDishActive(dishId) {
+      const dish = menuItems.find(m => m.id === dishId);
+      if (!dish) return;
+
+      dish.active = !dish.active;
+      saveLocalState();
+      renderMenuCatalog();
+
+      if (!dish.active) {
+        showToast(`"${dish.name}" pausado (pasó al fondo del menú).`, '⏸️');
+      } else {
+        showToast(`"${dish.name}" activado en el menú.`, '✓');
+      }
+    }
+
+    function toggleDishOutOfStock(dishId) {
+      const dish = menuItems.find(m => m.id === dishId);
+      if (!dish) return;
+
+      dish.outOfStock = !dish.outOfStock;
+      saveLocalState();
+      renderMenuCatalog();
+
+      if (dish.outOfStock) {
+        showToast(`"${dish.name}" marcado como AGOTADO por hoy.`, '⚠️');
+      } else {
+        showToast(`"${dish.name}" marcado como DISPONIBLE.`, '✓');
+      }
+    }
+
+    function quickEditPrice(dishId) {
+      const dish = menuItems.find(m => m.id === dishId);
+      if (!dish) return;
+
+      const newPriceStr = prompt(`Nuevo precio para "${dish.name}":`, dish.price);
+      if (newPriceStr !== null) {
+        const p = parseFloat(newPriceStr);
+        if (!isNaN(p) && p >= 0) {
+          dish.price = p;
+          saveLocalState();
+          renderMenuCatalog();
+          showToast(`Precio actualizado: $ ${p.toLocaleString('es-AR')}`, '💲');
+        }
+      }
+    }
+
+    function openNewDishModal() {
+      document.getElementById('dishModalTitle').textContent = 'Agregar Comida / Plato';
+      document.getElementById('editDishId').value = '';
+      document.getElementById('dishNameInput').value = '';
+      document.getElementById('dishCategoryInput').value = selectedCategory !== 'Todos' ? selectedCategory : 'Sándwiches & Minutas';
+      document.getElementById('dishPriceInput').value = '';
+      document.getElementById('dishDescriptionInput').value = '';
+      document.getElementById('dishEmojiInput').value = '🍽️';
+      document.getElementById('btnDeleteDish').classList.add('hidden');
+      document.getElementById('dishModal').classList.remove('hidden');
+    }
+
+    function openEditDishModal(dishId) {
+      const dish = menuItems.find(m => m.id === dishId);
+      if (!dish) return;
+
+      document.getElementById('dishModalTitle').textContent = `Editar: ${dish.name}`;
+      document.getElementById('editDishId').value = dish.id;
+      document.getElementById('dishNameInput').value = dish.name;
+      document.getElementById('dishCategoryInput').value = dish.category;
+      document.getElementById('dishPriceInput').value = dish.price;
+      document.getElementById('dishDescriptionInput').value = dish.description || '';
+      document.getElementById('dishEmojiInput').value = dish.emoji || '🍽️';
+      document.getElementById('btnDeleteDish').classList.remove('hidden');
+      document.getElementById('dishModal').classList.remove('hidden');
+    }
+
+    function closeDishModal() {
+      document.getElementById('dishModal').classList.add('hidden');
+    }
+
+    function saveDishItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('editDishId').value;
+      const name = document.getElementById('dishNameInput').value.trim();
+      const category = document.getElementById('dishCategoryInput').value.trim() || 'Minutas';
+      const price = parseFloat(document.getElementById('dishPriceInput').value) || 0;
+      const description = document.getElementById('dishDescriptionInput').value.trim();
+      const emoji = document.getElementById('dishEmojiInput').value.trim() || '🍽️';
+
+      if (id) {
+        const dish = menuItems.find(m => m.id === id);
+        if (dish) {
+          dish.name = name;
+          dish.category = category;
+          dish.price = price;
+          dish.description = description;
+          dish.emoji = emoji;
+        }
+      } else {
+        const newDish = {
+          id: 'dish_' + Date.now(),
+          name: name,
+          category: category,
+          price: price,
+          description: description,
+          emoji: emoji,
+          active: true,
+          outOfStock: false
+        };
+        menuItems.unshift(newDish);
+      }
+
+      saveLocalState();
+      renderCategoryChips();
+      renderMenuCatalog();
+      closeDishModal();
+      showToast('¡Plato guardado en el menú!', '✓');
+    }
+
+    function deleteCurrentDish() {
+      const id = document.getElementById('editDishId').value;
+      if (!id) return;
+      if (confirm('¿Eliminar este plato del menú?')) {
+        menuItems = menuItems.filter(m => m.id !== id);
+        saveLocalState();
+        renderCategoryChips();
+        renderMenuCatalog();
+        closeDishModal();
+        showToast('Plato eliminado.', '🗑️');
+      }
+    }
+
+    // ==========================================
+    // GESTOR DE GUSTOS DE EMPANADAS (DUEÑO)
+    // ==========================================
+    function openEmpanadaFlavorsManager() {
+      renderEmpanadaFlavorsManagerList();
+      document.getElementById('empanadaFlavorsModal').classList.remove('hidden');
+    }
+
+    function closeEmpanadaFlavorsModal() {
+      document.getElementById('empanadaFlavorsModal').classList.add('hidden');
+    }
+
+    function renderEmpanadaFlavorsManagerList() {
+      const container = document.getElementById('empanadaManagerList');
+      container.innerHTML = empanadaFlavors.map(f => {
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-stone-200 bg-stone-50">
+            <span class="font-bold text-xs ${f.active ? 'text-stone-900' : 'text-stone-400 line-through'}">🥟 ${f.name}</span>
+            <div class="flex items-center gap-1.5">
+              <button 
+                onclick="toggleFlavorActiveState('${f.id}')" 
+                class="px-2 py-1 rounded-lg text-[10px] font-black ${
+                  f.active ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'
+                }"
+              >
+                ${f.active ? 'Activo' : 'Agotado'}
+              </button>
+              <button onclick="deleteEmpanadaFlavor('${f.id}')" class="text-stone-400 hover:text-rose-600 p-1 text-xs">
+                ✕
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleFlavorActiveState(flavorId) {
+      const f = empanadaFlavors.find(item => item.id === flavorId);
+      if (!f) return;
+      f.active = !f.active;
+      saveLocalState();
+      renderEmpanadaFlavorsManagerList();
+    }
+
+    function deleteEmpanadaFlavor(flavorId) {
+      if (confirm('¿Eliminar este gusto de empanadas?')) {
+        empanadaFlavors = empanadaFlavors.filter(f => f.id !== flavorId);
+        saveLocalState();
+        renderEmpanadaFlavorsManagerList();
+      }
+    }
+
+    function addNewEmpanadaFlavor() {
+      const input = document.getElementById('newFlavorNameInput');
+      const name = (input.value || '').trim();
+      if (!name) return;
+
+      empanadaFlavors.push({
+        id: 'f_' + Date.now(),
+        name: name,
+        active: true
+      });
+
+      input.value = '';
+      saveLocalState();
+      renderEmpanadaFlavorsManagerList();
+      showToast(`Gusto "${name}" sumado.`, '🥟');
+    }
+
+    // ==========================================
+    // AJUSTES DEL NEGOCIO & GOOGLE DRIVE
+    // ==========================================
+    function openOwnerSettingsModal() {
+      document.getElementById('settingBusinessName').value = settings.businessName || 'Rotisería · Don Pepe';
+      document.getElementById('settingBusinessPhone').value = settings.businessPhone || '';
+      document.getElementById('settingBusinessAddress').value = settings.businessAddress || 'Av. San Martín 1420';
+      document.getElementById('settingDeliveryFee').value = settings.deliveryFee || 1200;
+      document.getElementById('settingPriceDozen').value = settings.priceDozen || 14000;
+      document.getElementById('settingPriceHalf').value = settings.priceHalf || 7500;
+      document.getElementById('settingPaymentAlias').value = settings.paymentAlias || 'rotiseria.donpepe.mp';
+      document.getElementById('settingPaymentHolder').value = settings.paymentHolder || 'José Rossi';
+      document.getElementById('settingLoyaltyToggle').checked = Boolean(settings.loyaltyEnabled);
+      document.getElementById('settingLoyaltyTarget').value = settings.loyaltyTarget || 6;
+      document.getElementById('settingLoyaltyReward').value = settings.loyaltyReward || '1/2 docena de empanadas o papas gratis';
+
+      document.getElementById('ownerSettingsModal').classList.remove('hidden');
+    }
+
+    function closeOwnerSettingsModal() {
+      document.getElementById('ownerSettingsModal').classList.add('hidden');
+    }
+
+    function saveOwnerSettings() {
+      settings.businessName = document.getElementById('settingBusinessName').value.trim() || 'Rotisería · Don Pepe';
+      settings.businessPhone = document.getElementById('settingBusinessPhone').value.trim().replace(/[^0-9]/g, '');
+      settings.businessAddress = document.getElementById('settingBusinessAddress').value.trim() || 'Av. San Martín 1420';
+      settings.deliveryFee = parseFloat(document.getElementById('settingDeliveryFee').value) || 0;
+      settings.priceDozen = parseFloat(document.getElementById('settingPriceDozen').value) || 14000;
+      settings.priceHalf = parseFloat(document.getElementById('settingPriceHalf').value) || 7500;
+      settings.paymentAlias = document.getElementById('settingPaymentAlias').value.trim() || 'rotiseria.donpepe.mp';
+      settings.paymentHolder = document.getElementById('settingPaymentHolder').value.trim() || 'José Rossi';
+      settings.loyaltyEnabled = document.getElementById('settingLoyaltyToggle').checked;
+      settings.loyaltyTarget = parseInt(document.getElementById('settingLoyaltyTarget').value) || 6;
+      settings.loyaltyReward = document.getElementById('settingLoyaltyReward').value.trim() || '1/2 docena de empanadas o papas gratis';
+
+      saveLocalState();
+      applySettingsToUI();
+      closeOwnerSettingsModal();
+      showToast('Ajustes del local guardados con éxito.', '✓');
+    }
+
+    function applySettingsToUI() {
+      document.getElementById('headerBusinessName').textContent = settings.businessName;
+      document.getElementById('headerAddressText').textContent = settings.businessAddress;
+      document.getElementById('empanadaBannerPrice').textContent = `Docena $${(settings.priceDozen || 14000).toLocaleString('es-AR')}`;
+      document.getElementById('loyaltySubHint').textContent = `Cada ${settings.loyaltyTarget || 6} pedidos te regalamos: ${settings.loyaltyReward}`;
+    }
+
+    function resetDemoMenuData() {
+      if (confirm('¿Restaurar el menú original y precios de fábrica?')) {
+        menuItems = [...DEFAULT_MENU_ITEMS];
+        empanadaFlavors = [...DEFAULT_EMPANADA_FLAVORS];
+        settings = Object.assign({}, DEFAULT_SETTINGS);
+        saveLocalState();
+        applySettingsToUI();
+        renderCategoryChips();
+        renderMenuCatalog();
+        closeOwnerSettingsModal();
+        showToast('Menú original restaurado.', '✓');
+      }
+    }
+
+    async function syncToGoogleDriveNow(manual = false) {
+      if (!navigator.onLine) {
+        if (manual) alert('Sin conexión a internet. Se sincronizará automáticamente apenas vuelva la red.');
+        return;
+      }
+      try {
+        const payload = {
+          folderName: AUTO_DRIVE_FOLDER,
+          filename: `rotiseria_backup_${new Date().toISOString().split('T')[0]}.json`,
+          data: {
+            settings,
+            menuItems,
+            empanadaFlavors,
+            exportDate: new Date().toISOString()
+          }
+        };
+
+        const res = await fetch(AUTO_DRIVE_WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        settings.lastBackupDate = new Date().toISOString();
+        saveLocalState();
+        if (manual) {
+          alert('¡Copia de seguridad guardada con éxito en Google Drive!');
+        }
+      } catch (err) {
+        if (manual) alert('Error al sincronizar con Google Drive. Los datos quedan guardados en tu celular.');
+      }
+    }
+
+    function exportMenuToCSV() {
+      let csv = "Categoría;Plato;Precio;Descripción;Estado\n";
+      menuItems.forEach(item => {
+        const estado = !item.active ? 'Pausado' : item.outOfStock ? 'Agotado' : 'Disponible';
+        csv += `"${item.category}";"${item.name}";${item.price};"${item.description || ''}";"${estado}"
+`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `menu_rotiseria_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    // ==========================================
+    // QR PARA VIDRIERA Y MOSTRADOR
+    // ==========================================
+    let windowQrInstance = null;
+
+    function openWindowQrModal() {
+      const menuUrl = window.location.origin + window.location.pathname;
+      document.getElementById('windowMenuUrlText').textContent = menuUrl;
+      document.getElementById('qrSalonTitle').textContent = settings.businessName || 'Rotisería · Don Pepe';
+
+      const container = document.getElementById('windowQrCodeContainer');
+      container.innerHTML = '';
+
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(container, {
+            text: menuUrl,
+            width: 200,
+            height: 200,
+            colorDark: '#1C1917',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } else {
+          container.innerHTML = `<img src="https://quickchart.io/qr?text=${encodeURIComponent(menuUrl)}&size=200" alt="QR Menú" class="w-48 h-48 rounded-xl shadow-sm">`;
+        }
+      } catch (err) {
+        container.innerHTML = `<img src="https://quickchart.io/qr?text=${encodeURIComponent(menuUrl)}&size=200" alt="QR Menú" class="w-48 h-48 rounded-xl shadow-sm">`;
+      }
+
+      document.getElementById('windowQrModal').classList.remove('hidden');
+    }
+
+    function closeWindowQrModal() {
+      document.getElementById('windowQrModal').classList.add('hidden');
+    }
+
+    function copyWindowMenuLink() {
+      const url = window.location.origin + window.location.pathname;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('¡Link del menú copiado!', '📋');
+        });
+      } else {
+        alert(url);
+      }
+    }
+
+    // ==========================================
+    // FIDELIDAD DEL CLIENTE & CONFETI
+    // ==========================================
+    function openCustomerLoyaltyCard() {
+      const target = settings.loyaltyTarget || 6;
+      const stamps = customerLoyalty.stamps || 0;
+
+      document.getElementById('loyaltyCardHolder').textContent = customerLoyalty.clientName || 'Cliente Fanático';
+      document.getElementById('loyaltyStampsRatio').textContent = `${stamps} / ${target}`;
+      document.getElementById('loyaltyRewardDesc').textContent = settings.loyaltyReward || '1/2 docena de empanadas o papas gratis';
+
+      const grid = document.getElementById('loyaltyCustomerGrid');
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= target; i++) {
+        const isStamped = i <= stamps;
+        const div = document.createElement('div');
+        div.className = isStamped
+          ? 'aspect-square rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 shadow-md shadow-orange-500/20 flex flex-col items-center justify-center text-stone-950 p-2 transform hover:scale-105 transition-transform'
+          : 'aspect-square rounded-2xl bg-stone-800/90 border-2 border-dashed border-stone-700 flex flex-col items-center justify-center text-stone-600 p-2';
+
+        div.innerHTML = isStamped
+          ? `<span class="text-2xl leading-none">🥟</span><span class="text-[9px] font-black uppercase tracking-wider mt-1 bg-stone-950/20 px-1 rounded text-stone-950">OK ✓</span>`
+          : `<span class="text-xl opacity-30 leading-none">🥟</span><span class="text-[9px] font-bold text-stone-500 mt-1">#${i}</span>`;
+        grid.appendChild(div);
+      }
+
+      const unlockedBanner = document.getElementById('loyaltyRewardUnlockedBanner');
+      const btnClaim = document.getElementById('btnClaimRotiseriaReward');
+
+      if (stamps >= target) {
+        unlockedBanner.classList.remove('hidden');
+        btnClaim.classList.remove('hidden');
+        setTimeout(launchRotiseriaConfetti, 350);
+      } else {
+        unlockedBanner.classList.add('hidden');
+        btnClaim.classList.add('hidden');
+      }
+
+      document.getElementById('customerLoyaltyModal').classList.remove('hidden');
+    }
+
+    function closeCustomerLoyaltyModal() {
+      document.getElementById('customerLoyaltyModal').classList.add('hidden');
+    }
+
+    function claimLoyaltyRewardByWhatsApp() {
+      const salon = settings.businessName || 'Rotisería · Don Pepe';
+      const phone = (settings.businessPhone || '5491122334455').replace(/[^0-9]/g, '');
+      const client = customerLoyalty.clientName || 'Cliente';
+      const reward = settings.loyaltyReward || '1/2 docena de empanadas o papas gratis';
+
+      const msg = `¡Hola *${salon}*! Soy *${client}*. Ya completé los sellos de mi Tarjeta de Fidelidad 🥟.
+
+` +
+                  `🏆 Quiero consultar para hacer un pedido y canjear mi premio: *${reward}*.
+¿En qué horario están atendiendo hoy? ¡Muchas gracias!`;
+
+      if (phone) {
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      } else {
+        alert(msg);
+      }
+    }
+
+    function launchRotiseriaConfetti() {
+      const canvas = document.getElementById('rotiseriaConfettiCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth || 360;
+      canvas.height = canvas.parentElement.clientHeight || 450;
+
+      const pieces = [];
+      const colors = ['#EA580C', '#F59E0B', '#FBBF24', '#10B981', '#FFFFFF'];
+      for (let i = 0; i < 65; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * (canvas.height / 2),
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedY: Math.random() * 3 + 2,
+          speedX: Math.random() * 4 - 2,
+          rotation: Math.random() * 360,
+          rotSpeed: Math.random() * 6 - 3
+        });
+      }
+
+      let frameCount = 0;
+      function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.rotation += p.rotSpeed;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+        frameCount++;
+        if (frameCount < 160) {
+          requestAnimationFrame(update);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      update();
+    }
+
+    // ==========================================
+    // NOTIFICACIONES FLOTANTES (TOAST)
+    // ==========================================
+    function showToast(message, icon = '✓') {
+      let toast = document.getElementById('globalAppToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalAppToast';
+        toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 bg-stone-900/95 border border-stone-700 text-white text-xs font-black rounded-2xl shadow-2xl flex items-center gap-2 pointer-events-none transition-all duration-300 opacity-0 translate-y-4';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="text-base">${icon}</span><span>${message}</span>`;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(window.__toastTimeout);
+      window.__toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 2500);
+    }
+
+    // ==========================================
+    // INICIALIZACIÓN
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLocalState();
+      applySettingsToUI();
+      renderCategoryChips();
+      renderMenuCatalog();
+
+      // Si hay red, sincronización silenciosa periódica
+      if (navigator.onLine) {
+        setTimeout(() => syncToGoogleDriveNow(false), 2000);
+      }
+      window.addEventListener('online', () => syncToGoogleDriveNow(false));
+    });
+  </script>
+</body>
+</html>
