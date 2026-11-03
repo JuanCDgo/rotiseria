@@ -142,6 +142,14 @@
         </div>
 
         <div class="flex items-center gap-1.5">
+          <!-- Botón rápido Cobro QR Mostrador -->
+          <button 
+            onclick="openQrCobroModal()" 
+            class="px-2.5 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold text-xs flex items-center gap-1.5 border border-amber-500/30 shadow-sm transition active:scale-95"
+            title="QR de cobro rápido para mostrador (Mercado Pago / Transferencia)"
+          >
+            <span>📷 Cobro QR</span>
+          </button>
           <!-- QR para vidriera / mostrador -->
           <button 
             onclick="openWindowQrModal()" 
@@ -812,6 +820,33 @@
   <!-- ========================================== -->
   <!-- MODAL: QR PARA VIDRIERA Y MOSTRADOR        -->
   <!-- ========================================== -->
+    <!-- ========================================== -->
+  <!-- MODAL: COBRO QR MOSTRADOR                  -->
+  <!-- ========================================== -->
+  <div id="qrCobroModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 modal-backdrop hidden transition-opacity">
+    <div class="bg-[#1C1917] border border-stone-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center relative">
+      <button onclick="closeQrCobroModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-400 flex items-center justify-center text-sm font-bold">✕</button>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">💳</span>
+        <h3 class="text-base font-black text-white">QR de Cobro Mostrador</h3>
+      </div>
+      <p class="text-xs text-stone-400 mb-4">El cliente escanea con Mercado Pago, MODO o cualquier banco</p>
+      
+      <div class="p-4 bg-white rounded-2xl shadow-inner flex items-center justify-center min-w-[190px] min-h-[190px]">
+        <div id="quickQrCobroContainer" class="flex items-center justify-center"></div>
+      </div>
+      
+      <div class="mt-4 p-3 bg-stone-900 border border-stone-800 rounded-xl w-full text-left">
+        <div class="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Alias para transferir</div>
+        <div class="flex items-center justify-between gap-2 mt-0.5">
+          <span id="quickQrDisplayAlias" class="text-amber-400 font-mono font-extrabold text-sm truncate">rotiseria.comidas.mp</span>
+          <button onclick="copyQuickQrAlias()" class="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold rounded-lg border border-stone-700 active:scale-95 transition">Copiar</button>
+        </div>
+        <div class="text-[11px] text-stone-400 mt-1 font-medium" id="quickQrDisplayOwner">Titular: Dueño del Local</div>
+      </div>
+    </div>
+  </div>
+
   <div id="windowQrModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 modal-backdrop hidden transition-opacity">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto no-scrollbar p-6 shadow-2xl flex flex-col space-y-4 text-center">
       
@@ -2357,6 +2392,61 @@
     // QR PARA VIDRIERA Y MOSTRADOR
     // ==========================================
     let windowQrInstance = null;
+
+        // ==========================================
+    // MODAL DE COBRO QR (MOSTRADOR)
+    // ==========================================
+    function openQrCobroModal() {
+      const alias = settings.paymentAlias || 'rotiseria.donpepe.mp';
+      const elAlias = document.getElementById('quickQrDisplayAlias');
+      if (elAlias) elAlias.textContent = alias;
+      const elOwner = document.getElementById('quickQrDisplayOwner');
+      if (elOwner) elOwner.textContent = 'Titular: ' + (settings.businessName || 'Rotisería · Don Pepe');
+      
+      const container = document.getElementById('quickQrCobroContainer');
+      if (container) {
+        container.innerHTML = '';
+        const qrPayload = 'https://mpago.la/transfer?alias=' + encodeURIComponent(alias);
+
+        let success = false;
+        try {
+          if (typeof QRCode !== 'undefined') {
+            new QRCode(container, {
+              text: qrPayload,
+              width: 170,
+              height: 170,
+              colorDark: '#1C1917',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+            success = true;
+          }
+        } catch (err) {
+          console.warn('QRCode JS error:', err);
+        }
+
+        if (!success) {
+          container.innerHTML = '<img src="https://quickchart.io/qr?text=' + encodeURIComponent(qrPayload) + '&size=170" alt="QR Cobro" class="w-[170px] h-[170px] rounded-xl shadow-sm mx-auto block">';
+        }
+      }
+
+      document.getElementById('qrCobroModal').classList.remove('hidden');
+    }
+
+    function closeQrCobroModal() {
+      document.getElementById('qrCobroModal').classList.add('hidden');
+    }
+
+    function copyQuickQrAlias() {
+      const alias = settings.paymentAlias || 'rotiseria.donpepe.mp';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(alias).then(() => {
+          showToast('¡Alias copiado al portapapeles!', '📋');
+        });
+      } else {
+        alert('Alias: ' + alias);
+      }
+    }
 
     function openWindowQrModal() {
       const menuUrl = window.location.origin + window.location.pathname;
