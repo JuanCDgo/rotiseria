@@ -176,9 +176,14 @@
       <!-- Barra de aviso Modo Dueño (se activa solo en modo admin) -->
       <div id="ownerModeBanner" class="mt-3 py-1.5 px-3 bg-amber-500/20 border border-amber-500/40 rounded-xl text-amber-300 text-xs font-bold flex items-center justify-between hidden">
         <span>👨‍🍳 Modo Dueño: podés pausar platos, cambiar precios y crear comidas.</span>
-        <button onclick="openNewDishModal()" class="px-2 py-0.5 bg-amber-500 text-stone-950 font-black rounded-lg text-[10px] shadow-sm">
-          + Nuevo Plato
-        </button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="ownerEmpanadasConfigBtn" onclick="openEmpanadaFlavorsManager()" class="px-2 py-0.5 bg-stone-800 border border-amber-500/40 text-amber-300 font-bold rounded-lg text-[10px] shadow-sm hidden">
+            🥟 Gustos
+          </button>
+          <button onclick="openNewDishModal()" class="px-2 py-0.5 bg-amber-500 text-stone-950 font-black rounded-lg text-[10px] shadow-sm">
+            + Nuevo Plato
+          </button>
+        </div>
       </div>
     </header>
 
@@ -2055,12 +2060,12 @@
       if (isOwnerMode) {
         label.textContent = 'Modo Dueño: ON';
         banner.classList.remove('hidden');
-        empanadaConfig.classList.remove('hidden');
+        if (empanadaConfig) empanadaConfig.classList.remove('hidden');
         showToast('Modo Dueño activado: podés pausar platos, editar precios y comidas.', '👨‍🍳');
       } else {
         label.textContent = 'Modo Dueño: OFF';
         banner.classList.add('hidden');
-        empanadaConfig.classList.add('hidden');
+        if (empanadaConfig) empanadaConfig.classList.add('hidden');
         showToast('Modo Cliente activado.', '👁️');
       }
 
