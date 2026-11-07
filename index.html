@@ -106,7 +106,7 @@
       <!-- Top mini bar: estado abierto y horarios -->
       <div class="flex items-center justify-between text-[11px] pb-2 border-b border-stone-800">
         <div class="flex items-center gap-1.5 font-bold">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm ring-2 ring-emerald-500/20"></span>
           <span class="text-emerald-400 font-extrabold uppercase tracking-wider" id="headerStatusText">Abierto para Takeaway & Envío</span>
         </div>
         <div class="flex items-center gap-2">
@@ -126,7 +126,7 @@
       <!-- Nombre del local y acciones principales -->
       <div class="flex items-center justify-between mt-3">
         <div class="flex items-center gap-3">
-          <div id="headerLogoContainer" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 shadow-md flex-shrink-0 flex items-center justify-center text-2xl font-black overflow-hidden border border-amber-400/30">
+          <div id="headerLogoContainer" class="w-12 h-12 rounded-2xl bg-stone-800 text-amber-500 ring-2 ring-amber-500/30 shadow-sm flex-shrink-0 flex items-center justify-center text-2xl font-black overflow-hidden border border-amber-400/20">
             <span class="select-none">🍗</span>
           </div>
           <div>
@@ -148,7 +148,10 @@
             class="px-2.5 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold text-xs flex items-center gap-1.5 border border-amber-500/30 shadow-sm transition active:scale-95"
             title="QR de cobro rápido para mostrador (Mercado Pago / Transferencia)"
           >
-            <span>📷 Cobro QR</span>
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+            </svg>
+            <span>QR</span>
           </button>
           <!-- QR para vidriera / mostrador -->
           <button 
@@ -156,7 +159,9 @@
             class="w-9 h-9 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-400 hover:bg-stone-700 active:scale-95 transition-all shadow-sm" 
             title="QR para pegar en la vidriera o mostrador"
           >
-            <span class="text-sm font-black">📷</span>
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+            </svg>
           </button>
 
           <!-- Ajustes del negocio (visible para el dueño) -->
@@ -228,7 +233,7 @@
     <main class="flex-1 p-4 space-y-4">
       
       <!-- BANNER DE EMPANADAS (EL ARMADOR INTELIGENTE COMPACTO) -->
-      <section id="empanadasPromoBanner" class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white p-3 rounded-2xl shadow-sm relative overflow-hidden">
+      <section id="empanadasPromoBanner" class="bg-[#C2410C] text-white p-3 rounded-2xl shadow-sm relative overflow-hidden">
         <div class="relative z-10 flex items-center justify-between gap-3">
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
@@ -268,7 +273,7 @@
           onclick="openCustomerLoyaltyCard()" 
           class="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-[11px] rounded-lg shrink-0 active:scale-95 transition-all"
         >
-          Mi Tarjeta 📱
+          Mi Tarjeta
         </button>
       </section>
 
@@ -282,10 +287,10 @@
     <!-- ========================================== -->
     <!-- BARRA FLOTANTE INFERIOR DE CARRITO         -->
     <!-- ========================================== -->
-    <div id="floatingCartBar" class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/95 to-transparent z-30 flex items-center justify-center pointer-events-none transition-transform duration-300 translate-y-24">
+    <div id="floatingCartBar" class="fixed bottom-0 left-0 right-0 p-4 bg-stone-950/95 border-t border-stone-800 z-30 flex items-center justify-center pointer-events-none transition-transform duration-300 translate-y-24">
       <button 
         onclick="openCartModal()" 
-        class="pointer-events-auto w-full max-w-sm bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 hover:from-orange-500 hover:to-amber-500 text-white py-3.5 px-5 rounded-2xl font-black text-sm shadow-2xl active:scale-[0.98] transition-all flex items-center justify-between"
+        class="pointer-events-auto w-full max-w-sm bg-[#C2410C] hover:bg-[#9A3412] text-white py-3.5 px-5 rounded-2xl font-black text-sm shadow-xl active:scale-[0.98] transition-all flex items-center justify-between"
       >
         <div class="flex items-center gap-2">
           <span class="text-lg">🛒</span>
@@ -320,7 +325,7 @@
       <!-- Barra de llenado dinámica -->
       <div class="space-y-1">
         <div class="w-full bg-stone-100 h-2.5 rounded-full overflow-hidden border border-stone-200">
-          <div id="builderProgressBar" class="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+          <div id="builderProgressBar" class="h-full bg-orange-600 rounded-full transition-all duration-300" style="width: 0%;"></div>
         </div>
         <p class="text-center text-xs font-bold text-stone-500" id="builderRemainingHint">
           Elegí los gustos con (+) hasta completar las 12 empanadas.
@@ -658,7 +663,7 @@
             <span class="text-[10px] font-bold text-amber-700 bg-amber-200/60 px-2 py-0.5 rounded-full">Personalizado</span>
           </div>
           <div class="flex items-center gap-3">
-            <div id="settingLogoPreviewContainer" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-3xl font-black text-white overflow-hidden shadow-inner border border-amber-300 shrink-0">
+            <div id="settingLogoPreviewContainer" class="w-14 h-14 rounded-2xl bg-stone-800 text-amber-500 ring-2 ring-amber-500/30 flex items-center justify-center text-3xl font-black overflow-hidden shadow-inner border border-amber-300 shrink-0">
               <span id="settingLogoEmojiPreview">🍗</span>
               <img id="settingLogoImagePreview" src="" alt="Logo" class="w-full h-full object-cover hidden">
             </div>
@@ -867,7 +872,7 @@
 
       <div class="flex flex-col items-center justify-center py-2">
         <div class="bg-white p-4 rounded-3xl shadow-xl border-2 border-stone-200 inline-block">
-          <div id="qrLogoContainer" class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-3 border border-stone-200 shadow-sm flex items-center justify-center bg-gradient-to-tr from-amber-500 to-orange-600 text-white font-black text-2xl"><span class="select-none">🍗</span></div>
+          <div id="qrLogoContainer" class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-3 border border-stone-200 shadow-sm flex items-center justify-center bg-stone-800 text-amber-500 ring-2 ring-amber-500/30 text-white font-black text-2xl"><span class="select-none">🍗</span></div>
           <div id="windowQrCodeContainer" class="w-[200px] h-[200px] flex items-center justify-center"></div>
         </div>
         <h4 class="font-black text-stone-900 text-base mt-3" id="qrSalonTitle">Rotisería · Don Pepe</h4>
@@ -916,7 +921,7 @@
       </div>
 
       <!-- Tarjeta VIP con Confeti Canvas -->
-      <div class="bg-gradient-to-b from-stone-900 to-warmStone-900 text-white rounded-3xl p-5 border-2 border-amber-500/40 shadow-xl relative overflow-hidden space-y-3.5">
+      <div class="bg-[#18181B] text-white rounded-3xl p-5 border-2 border-amber-500/40 shadow-xl relative overflow-hidden space-y-3.5">
         <canvas id="rotiseriaConfettiCanvas" class="absolute inset-0 pointer-events-none z-30 w-full h-full"></canvas>
 
         <div class="flex items-center justify-between border-b border-stone-800 pb-2">
@@ -948,7 +953,7 @@
           <p class="text-xs font-black text-white" id="loyaltyRewardDesc">1/2 docena de empanadas o papas gratis</p>
         </div>
 
-        <div id="loyaltyRewardUnlockedBanner" class="bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 p-3 rounded-2xl text-center shadow-lg hidden font-black text-xs animate-bounce">
+        <div id="loyaltyRewardUnlockedBanner" class="bg-amber-500 text-stone-950 p-3 rounded-2xl text-center shadow-sm hidden font-black text-xs">
           🏆 ¡PREMIO DESBLOQUEADO! Pedí por WhatsApp y reclamá tu premio gratis.
         </div>
       </div>
@@ -1955,6 +1960,25 @@
       document.getElementById('cartTotalText').textContent = `$ ${total.toLocaleString('es-AR')}`;
     }
 
+    // Normalización de celular argentino (+54 9 ...) para WhatsApp infalible
+    function formatArgentineWhatsApp(rawPhone) {
+      let cleaned = String(rawPhone || '').replace(/\D/g, '');
+      if (!cleaned) return '';
+      if (cleaned.startsWith('549')) return cleaned;
+      if (cleaned.startsWith('54')) {
+        cleaned = cleaned.substring(2);
+        if (!cleaned.startsWith('9')) cleaned = '9' + cleaned;
+        return '54' + cleaned;
+      }
+      if (cleaned.startsWith('15') && cleaned.length === 10) {
+        cleaned = cleaned.substring(2);
+      }
+      if (!cleaned.startsWith('9')) {
+        cleaned = '9' + cleaned;
+      }
+      return '54' + cleaned;
+    }
+
     // EL ENVÍO LIMPIO Y DETALLADO AL WHATSAPP DE LA ROTISERÍA
     function submitOrderToWhatsApp() {
       const name = (document.getElementById('orderCustomerName').value || '').trim();
@@ -2037,8 +2061,10 @@
       saveLocalState();
 
       // Enviar WhatsApp al teléfono del negocio
-      const cleanPhone = (settings.businessPhone || '5491122334455').replace(/[^0-9]/g, '');
-      const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      const cleanPhone = formatArgentineWhatsApp(settings.businessPhone || '5491122334455');
+      const waUrl = cleanPhone 
+        ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
 
       window.open(waUrl, '_blank');
       closeCartModal();
@@ -2530,7 +2556,7 @@
         const isStamped = i <= stamps;
         const div = document.createElement('div');
         div.className = isStamped
-          ? 'aspect-square rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 border border-amber-300 shadow-md shadow-orange-500/20 flex flex-col items-center justify-center text-stone-950 p-2 transform hover:scale-105 transition-transform'
+          ? 'aspect-square rounded-2xl bg-amber-500 border border-amber-400 shadow-sm flex flex-col items-center justify-center text-stone-950 p-2 transition-transform'
           : 'aspect-square rounded-2xl bg-stone-800/90 border-2 border-dashed border-stone-700 flex flex-col items-center justify-center text-stone-600 p-2';
 
         div.innerHTML = isStamped
@@ -2560,7 +2586,7 @@
 
     function claimLoyaltyRewardByWhatsApp() {
       const salon = settings.businessName || 'Rotisería · Don Pepe';
-      const phone = (settings.businessPhone || '5491122334455').replace(/[^0-9]/g, '');
+      const phone = formatArgentineWhatsApp(settings.businessPhone || '5491122334455');
       const client = customerLoyalty.clientName || 'Cliente';
       const reward = settings.loyaltyReward || '1/2 docena de empanadas o papas gratis';
 
@@ -2571,7 +2597,7 @@
 ¿En qué horario están atendiendo hoy? ¡Muchas gracias!`;
 
       if (phone) {
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
       } else {
         alert(msg);
       }
