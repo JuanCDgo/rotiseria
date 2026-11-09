@@ -131,7 +131,7 @@
           </div>
           <div>
             <h1 class="text-lg font-black tracking-tight text-white leading-tight" id="headerBusinessName">
-              Rotisería · Don Pepe
+              Rotisería & Minutas Demo
             </h1>
             <p class="text-xs text-amber-400/90 font-semibold flex items-center gap-1.5 mt-0.5">
               <span>Comida casera para llevar</span>
@@ -685,7 +685,7 @@
           <input 
             type="text" 
             id="settingBusinessName" 
-            value="Rotisería · Don Pepe" 
+            value="Rotisería & Minutas Demo" 
             class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-stone-50 focus:bg-white focus:outline-none"
           >
         </div>
@@ -695,7 +695,7 @@
           <input 
             type="tel" 
             id="settingBusinessPhone" 
-            placeholder="Ej: 5491122334455" 
+            placeholder="Ej: 5491100000000" 
             class="w-full px-3 py-2 rounded-xl border border-stone-200 text-xs font-bold bg-stone-50 focus:bg-white focus:outline-none"
           >
         </div>
@@ -875,7 +875,7 @@
           <div id="qrLogoContainer" class="w-14 h-14 rounded-2xl overflow-hidden mx-auto mb-3 border border-stone-200 shadow-sm flex items-center justify-center bg-stone-800 text-amber-500 ring-2 ring-amber-500/30 text-white font-black text-2xl"><span class="select-none">🍗</span></div>
           <div id="windowQrCodeContainer" class="w-[200px] h-[200px] flex items-center justify-center"></div>
         </div>
-        <h4 class="font-black text-stone-900 text-base mt-3" id="qrSalonTitle">Rotisería · Don Pepe</h4>
+        <h4 class="font-black text-stone-900 text-base mt-3" id="qrSalonTitle">Rotisería & Minutas Demo</h4>
         <p class="text-xs text-stone-500 mt-0.5 max-w-[260px]">
           Los clientes escanean este código con la cámara y ven el menú actualizado con precios al instante.
         </p>
@@ -990,7 +990,7 @@
     const DEFAULT_SETTINGS = {
       businessName: 'Rotisería & Minutas',
       businessLogo: '', // Imagen en Base64 o URL del logo
-      businessPhone: '5491122334455',
+      businessPhone: '5491100000000',
       businessAddress: 'Av. San Martín 1420',
       businessHours: 'Mar a Dom 11:30 a 14:30 hs y 19:30 a 23:30 hs',
       isOpen: true,
@@ -2006,7 +2006,7 @@
       const total = subtotal + deliveryFee;
 
       // Armar mensaje WhatsApp hiper prolijo
-      const salon = settings.businessName || 'Rotisería · Don Pepe';
+      const salon = settings.businessName || 'Rotisería & Minutas Demo';
       let msg = `¡Hola *${salon}*! Quiero hacer el siguiente pedido:
 
 `;
@@ -2061,7 +2061,7 @@
       saveLocalState();
 
       // Enviar WhatsApp al teléfono del negocio
-      const cleanPhone = formatArgentineWhatsApp(settings.businessPhone || '5491122334455');
+      const cleanPhone = formatArgentineWhatsApp(settings.businessPhone || '5491100000000');
       const waUrl = cleanPhone 
         ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`
         : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
@@ -2321,7 +2321,7 @@
     }
 
     function saveOwnerSettings() {
-      settings.businessName = document.getElementById('settingBusinessName').value.trim() || 'Rotisería · Don Pepe';
+      settings.businessName = document.getElementById('settingBusinessName').value.trim() || 'Rotisería & Minutas Demo';
       settings.businessPhone = document.getElementById('settingBusinessPhone').value.trim().replace(/[^0-9]/g, '');
       settings.businessAddress = document.getElementById('settingBusinessAddress').value.trim() || 'Av. San Martín 1420';
       settings.deliveryFee = parseFloat(document.getElementById('settingDeliveryFee').value) || 0;
@@ -2432,7 +2432,7 @@
       const elAlias = document.getElementById('quickQrDisplayAlias');
       if (elAlias) elAlias.textContent = alias;
       const elOwner = document.getElementById('quickQrDisplayOwner');
-      if (elOwner) elOwner.textContent = 'Titular: ' + (settings.businessName || 'Rotisería · Don Pepe');
+      if (elOwner) elOwner.textContent = 'Titular: ' + (settings.businessName || 'Rotisería & Minutas Demo');
       
       const container = document.getElementById('quickQrCobroContainer');
       if (container) {
@@ -2585,8 +2585,8 @@
     }
 
     function claimLoyaltyRewardByWhatsApp() {
-      const salon = settings.businessName || 'Rotisería · Don Pepe';
-      const phone = formatArgentineWhatsApp(settings.businessPhone || '5491122334455');
+      const salon = settings.businessName || 'Rotisería & Minutas Demo';
+      const phone = formatArgentineWhatsApp(settings.businessPhone || '5491100000000');
       const client = customerLoyalty.clientName || 'Cliente';
       const reward = settings.loyaltyReward || '1/2 docena de empanadas o papas gratis';
 
